@@ -27,6 +27,11 @@ def get_cliente_by_cif(db: Session, cif: str):
     """Busca un cliente por su CIF único."""
     return db.query(models.Cliente).filter(models.Cliente.cif == cif).first()
 
+def get_cliente_by_nombre(db: Session, nombre_empresa: str):
+    """Busca un cliente por su nombre de empresa (usado para validar unicidad en admins)."""
+    # Buscamos ignorando mayúsculas/minúsculas para mayor robustez
+    return db.query(models.Cliente).filter(func.lower(models.Cliente.nombre_empresa) == func.lower(nombre_empresa)).first()
+
 def get_clientes(db: Session, skip: int = 0, limit: int = 100, q: str = None):
     """
     Listado de clientes con búsqueda por texto y triple criterio de ordenamiento:

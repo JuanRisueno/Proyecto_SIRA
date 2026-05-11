@@ -38,6 +38,12 @@ def crear_cliente(
     db_cliente = crud.get_cliente_by_cif(db, cif=cliente.cif)
     if db_cliente:
         raise HTTPException(status_code=400, detail="El cliente con este CIF ya está registrado.")
+        
+    # Validación: No puede haber 2 admins o root con el mismo nombre
+    if cliente.rol in ["admin", "root"]:
+        existente_nombre = crud.get_cliente_by_nombre(db, nombre_empresa=cliente.nombre_empresa)
+        if existente_nombre and existente_nombre.rol in ["admin", "root"]:
+            raise HTTPException(status_code=400, detail=f"Ya existe un administrador con el nombre '{cliente.nombre_empresa}'.")
     
     return crud.create_cliente(db=db, cliente=cliente, rol=cliente.rol)
 
@@ -147,6 +153,12 @@ def actualizar_cliente(
         raise HTTPException(status_code=403, detail="Rol no reconocido.")
 
     try:
+        # Validación extra: Si cambia el nombre y es admin, comprobar unicidad
+        if cliente_update.nombre_empresa and db_cliente_actual.rol in ["admin", "root"]:
+            existente_nombre = crud.get_cliente_by_nombre(db, nombre_empresa=cliente_update.nombre_empresa)
+            if existente_nombre and existente_nombre.cliente_id != cliente_id and existente_nombre.rol in ["admin", "root"]:
+                raise HTTPException(status_code=400, detail=f"Ya existe un administrador con el nombre '{cliente_update.nombre_empresa}'.")
+
         db_cliente = crud.update_cliente(db=db, cliente_id=cliente_id, cliente_update=cliente_update)
         if db_cliente is None:
             raise HTTPException(status_code=404, detail="Cliente no encontrado")

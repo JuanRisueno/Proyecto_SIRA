@@ -95,3 +95,75 @@ function checkMatch(minLenRequired) {
         btn.style.background = ""; 
     }
 }
+
+/**
+ * Genera una contraseña temporal segura que cumpla con todos los requisitos.
+ */
+function generateTemporaryPassword(passId = 'password', confId = 'confirm_password', btnContext = null) {
+    const chars = "abcdefghijklmnopqrstuvwxyz";
+    const CAPS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const NUMS = "0123456789";
+    const SYMS = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+
+    // Asegurar al menos uno de cada
+    let pw = chars[Math.floor(Math.random() * chars.length)]
+           + CAPS[Math.floor(Math.random() * CAPS.length)]
+           + NUMS[Math.floor(Math.random() * NUMS.length)]
+           + SYMS[Math.floor(Math.random() * SYMS.length)];
+
+    const all = chars + CAPS + NUMS + SYMS;
+    const length = 12; // 12 chars es seguro y cumple req de 10
+    
+    for (let i = pw.length; i < length; i++) {
+        pw += all[Math.floor(Math.random() * all.length)];
+    }
+
+    // Mezclar carácteres
+    pw = pw.split('').sort(() => 0.5 - Math.random()).join('');
+
+    const passInput = document.getElementById(passId);
+    const confInput = document.getElementById(confId);
+    
+    if (passInput) {
+        passInput.value = pw;
+        passInput.type = 'text'; // Mostrarla
+        // Activar el botón de alternancia para mostrar el icono de "ojo tachado" si existe
+        const wrapper = passInput.closest('.password-toggle-wrapper');
+        if (wrapper) {
+            const btn = wrapper.querySelector('.password-toggle-btn');
+            if (btn) togglePassword(passId, btn); // Esto podría volver a tipo password, forzamos texto a continuación
+        }
+        passInput.type = 'text'; // Forzar tipo texto de nuevo por seguridad visual
+    }
+    
+    if (confInput) {
+        confInput.value = pw;
+        confInput.type = 'text';
+    }
+
+    // Actualizar el UI de la complejidad si existe
+    const event = new Event('input');
+    if (passInput) passInput.dispatchEvent(event);
+    if (confInput) confInput.dispatchEvent(event);
+
+    // Eliminar el cambio de texto para mantener el diseño de botones con icono
+}
+
+/**
+ * Copia el valor del input especificado al portapapeles.
+ */
+function copyToClipboard(inputId, btnContext) {
+    const input = document.getElementById(inputId);
+    if (input && input.value) {
+        navigator.clipboard.writeText(input.value).then(() => {
+            const originalHTML = btnContext.innerHTML;
+            // Solo icono de check
+            btnContext.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            setTimeout(() => { btnContext.innerHTML = originalHTML; }, 2000);
+        }).catch(err => {
+            console.error('Error al copiar: ', err);
+            btnContext.innerText = "Error";
+        });
+    }
+}
+

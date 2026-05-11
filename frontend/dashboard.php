@@ -50,6 +50,11 @@ if ($arbol === null): ?>
         'reset_jornada_ok' => '🧹 Configuración de jornadas reseteada correctamente.',
         'social_actualizado' => '🌐 Redes sociales actualizadas con éxito.'
     ];
+
+    $errores_map = [
+        'solo_root_puede_editar_admins' => '⚠️ Solo el usuario Root tiene permisos para gestionar cuentas de administración.',
+        'usuario_no_encontrado' => '⚠️ El usuario solicitado no existe o no ha podido ser cargado.'
+    ];
 ?>
 <?php if ((isset($_GET['msg']) && isset($mensajes_map[$_GET['msg']])) || isset($_GET['error'])): ?>
 <div class="container" style="margin-top: 1rem; margin-bottom: -1.5rem;">
@@ -59,9 +64,12 @@ if ($arbol === null): ?>
         </div>
     <?php endif; ?>
 
-    <?php if (isset($_GET['error'])): ?>
+    <?php if (isset($_GET['error'])): 
+        $err_key = $_GET['error'];
+        $err_msg = $errores_map[$err_key] ?? "⚠️ Error: " . htmlspecialchars($err_key);
+    ?>
         <div class="alert alert-error" style="display: flex; align-items: center; gap: 12px; padding: 1rem 1.5rem; background: rgba(248, 113, 113, 0.1); border: 1px solid #f87171; border-radius: 10px; color: #f87171; font-weight: 600; font-size: 0.9rem;">
-            <span>⚠️ <?= htmlspecialchars($_GET['error']) ?></span>
+            <span><?= $err_msg ?></span>
         </div>
     <?php endif; ?>
 </div>

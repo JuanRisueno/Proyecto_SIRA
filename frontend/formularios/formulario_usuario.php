@@ -74,13 +74,13 @@ if (!empty($from)) {
 
 // 4. Procesar Formulario (POST/PUT)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nombre_empresa   = $_POST['nombre_empresa'] ?? '';
-    $cif              = $_POST['cif'] ?? '';
-    $persona_contacto = $_POST['persona_contacto'] ?? '';
-    $email_admin      = $_POST['email_admin'] ?? '';
-    $telefono         = $_POST['telefono'] ?? '';
-    $password         = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
+    $nombre_empresa   = trim($_POST['nombre_empresa'] ?? '');
+    $cif              = trim($_POST['cif'] ?? '');
+    $persona_contacto = trim($_POST['persona_contacto'] ?? '');
+    $email_admin      = trim($_POST['email_admin'] ?? '');
+    $telefono         = trim($_POST['telefono'] ?? '');
+    $password         = trim($_POST['password'] ?? '');
+    $confirm_password = trim($_POST['confirm_password'] ?? '');
     $rol              = $_POST['rol'] ?? ($is_edit ? $user_data['rol'] : 'cliente');
 
     // Validaciones específicas de Edición de Cliente
@@ -271,22 +271,36 @@ $label_contacto = $es_admin_target ? "Departamento / Cargo" : "Persona de Contac
 
                 <div class="form-col-1">
                     <div class="input-group-premium">
-                        <label><?= $is_edit ? "Nueva Contraseña (Opcional)" : "Contraseña (*)" ?></label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="margin: 0;"><?= $is_edit ? "Nueva Contraseña (Opcional)" : "Contraseña Temporal (*)" ?></label>
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" onclick="generateTemporaryPassword('password', 'confirm_password', this)" class="mini-btn" title="Generar Contraseña Segura">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                                </button>
+                            </div>
+                        </div>
                         <div class="password-toggle-wrapper">
-                            <input type="password" name="password" id="password" <?= !$is_edit ? 'required' : '' ?> placeholder="<?= !$is_edit ? 'Mín. 6 caracteres' : 'Dejar vacío para no cambiar' ?>" value="<?= !$is_edit ? 'sol1234' : '' ?>">
+                            <input type="password" name="password" id="password" <?= !$is_edit ? 'required' : '' ?> placeholder="<?= !$is_edit ? 'Autogenerando...' : 'Dejar vacío para no cambiar' ?>">
                             <button type="button" class="password-toggle-btn" onclick="togglePassword('password', this)">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             </button>
                         </div>
                         <div style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.5rem; opacity: 0.8; line-height: 1.4;">
-                            🛡️ Seguridad SIRA: Mínimo 8 caracteres (10 para Admin/Root), incluye mayúscula, número y símbolo.
+                            🛡️ Por seguridad, se genera una contraseña temporal. Obligatorio cambiar al iniciar sesión.
                         </div>
                     </div>
                 </div>
 
                 <div class="form-col-1">
                     <div class="input-group-premium">
-                        <label>Repetir Contraseña</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label style="margin: 0;">Repetir Contraseña</label>
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" onclick="copyToClipboard('password', this)" class="mini-btn" title="Copiar Contraseña">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                </button>
+                            </div>
+                        </div>
                         <div class="password-toggle-wrapper">
                             <input type="password" name="confirm_password" id="confirm_password" <?= !$is_edit ? 'required' : '' ?> placeholder="Repite la contraseña">
                             <button type="button" class="password-toggle-btn" onclick="togglePassword('confirm_password', this)">
@@ -319,6 +333,16 @@ $label_contacto = $es_admin_target ? "Departamento / Cargo" : "Persona de Contac
     </div>
 </div>
 
-<script src="../assets/js/sira-security-ui.js"></script>
+<script src="../assets/js/sira-security-ui.js?v=<?= time() ?>"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    <?php if (!$is_edit): ?>
+    // Auto-generar contraseña temporal al crear usuario nuevo
+    setTimeout(() => {
+        generateTemporaryPassword('password', 'confirm_password');
+    }, 100);
+    <?php endif; ?>
+});
+</script>
 
 <?php require_once '../includes/footer.php'; ?>

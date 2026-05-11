@@ -96,17 +96,6 @@ require_once '../includes/header.php';
 
                 <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 1.2rem; border-radius: 12px; margin-bottom: 1rem;">
                     
-                    <div style="margin-bottom: 0.8rem;">
-                        <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">CONTRASEÑA ACTUAL (GENÉRICA)</label>
-                        <?php
-                            $pw_hint = 'sol1234';
-                            if ($user_rol === 'root') $pw_hint = 'root1234';
-                            elseif ($user_rol === 'admin') $pw_hint = 'admin1234';
-                        ?>
-                        <div style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); padding: 0.6rem 1rem; border-radius: 8px; color: var(--color-text-muted); font-family: monospace; font-size: 0.9rem; pointer-events: none; border: 1px solid rgba(255,255,255,0.1);">
-                            <?= $pw_hint ?>
-                        </div>
-                    </div>
 
                     <div style="margin-bottom: 0.8rem;">
                         <label style="display: block; font-size: 0.65rem; font-weight: 800; color: var(--color-text-main); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">NUEVA CONTRASEÑA</label>
