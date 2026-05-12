@@ -6,10 +6,13 @@ Este documento detalla la arquitectura de red, la gestión de usuarios y las med
 
 ## 1. Arquitectura de Red y Perímetro
 
-### Uso de Nginx como Proxy Inverso
-Para el proyecto se ha configurado **Nginx** como el único punto de acceso externo al sistema.
+### Uso de Nginx como Proxy Inverso y API Gateway
+Para el proyecto se ha configurado **Nginx** como el único punto de acceso externo al sistema, ejerciendo funciones de enrutador inteligente y cortafuegos de aplicación inicial.
 - **Aislamiento de servicios**: Tanto el backend (FastAPI) como la base de datos (PostgreSQL) corren en una red privada de Docker. Solo se puede acceder a ellos a través de Nginx, lo que evita ataques directos a los puertos 8000 o 5432.
-- **Configuración en AWS**: En el despliegue realizado en AWS EC2, se ha mapeado Nginx al puerto 80 para cumplir con los estándares HTTP y facilitar la configuración de los Security Groups de Amazon.
+- **Ocultación de topología (Routing)**: Nginx unifica todos los servicios bajo el mismo puerto. Enruta dinámicamente las peticiones sensibles (`/api`, `/docs`, `/redoc`) hacia FastAPI y delega el tráfico general al frontend, evitando que el usuario exterior sepa cuántos servidores o en qué puertos están corriendo internamente.
+- **Prevención de Denegación de Servicio (DoS) por saturación**: Se ha implementado un control estricto de subidas mediante la directiva `client_max_body_size`, previniendo que un atacante envíe *payloads* gigantescos que colapsen la memoria del servidor o la API.
+- **Conexiones IoT seguras**: Se ha habilitado explícitamente el soporte de HTTP/1.1 y *Upgrade* de WebSockets, garantizando que el flujo de datos en tiempo real de los sensores no sufra cortes por *timeouts* o cierres abruptos.
+- **Abstracción del puerto host**: El archivo `docker-compose.yml` abstrae la exposición exterior, permitiendo usar el puerto 8085 en local y mapearlo al puerto HTTP estándar 80 en AWS EC2, lo que facilita enormemente la configuración de los *Security Groups* de Amazon sin modificar el servidor web interno.
 
 ### Contenedores y Docker
 - **Gestión de volúmenes**: Se han separado los datos de la base de datos y los logs de seguridad en volúmenes persistentes de Docker.
@@ -53,8 +56,8 @@ Para aumentar la seguridad de las cuentas, se han añadido estas funcionalidades
 
 ## 5. Seguridad en el Sistema IoT
 
-### Tokens para Sensores
-Para que nadie pueda enviar datos falsos al sistema, los dispositivos IoT deben incluir un token privado en sus peticiones. Si el token no es correcto, la API rechaza los datos.
+### Entorno Simulado y Telemetría Abierta
+En la versión actual del proyecto (orientada a la demostración del TFG), la capa de telemetría IoT opera en un entorno simulado. Para facilitar el uso de la herramienta de "Simulación Climática" desde el dashboard y agilizar las pruebas de carga, los endpoints de ingesta de datos (`/api/v1/iot/mediciones/`) se mantienen abiertos dentro de la red interna sin requerir tokens de autenticación por dispositivo. La implementación de API Keys individuales por sensor queda como una ampliación planificada para futuras versiones del sistema en producción física.
 
 ---
 
@@ -73,4 +76,4 @@ Para que nadie pueda enviar datos falsos al sistema, los dispositivos IoT deben 
 > Este documento resume el estado final de la seguridad del proyecto para la defensa del TFG.
 
 **Proyecto SIRA - Documentación Técnica**  
-*Última actualización: 30 de Abril de 2026 (Versión 1.0)*
+*Última actualización: 12 de Mayo de 2026 (Versión 1.1)*
