@@ -210,21 +210,24 @@ __marimo__/
 logs/
 
 
-# Estado local y configuraciones din谩micas de clientes (SIRA Data)
-# Estado local y configuraciones din醡icas (SIRA Data)
-backend/app/config_clientes/
-backend/app/config_sistema/
+# Estado local y configuraci贸nes din谩micas de clientes (SIRA Data)
+# Estado local y configuraci贸nes din锟絤icas (SIRA Data)
+backend/config_clientes/
+backend/config_sistema/
 
 # Seguridad y persistencia (Iron Fortress)
-backend/app/data/
+backend/data/
 
 
-# Simulaciones IoT efimeras - generadas en tiempo de ejecucion, no reproducibles
-# presets_clima.json SI se versiona (configuracion fija)
+# Simulaciones IoT ef铆meras - generadas en tiempo de ejecuci贸n, no reproducibles
+# presets_clima.json SI se versiona (configuraci贸n fija)
 backend/app/logic/sim_context_*.json
 
 # Log de debug temporal
-backend/app/api_debug.log
+backend/api_debug.log
+*.log
+*.db
+sira.db
 
 # Guiones para la defensa del TFG (Privado)
 docs/defensa_tfg/
