@@ -1,6 +1,6 @@
 # Lógica de Control: Sensores y Actuadores - Proyecto SIRA
 
-En este documento detallo cómo funciona la lógica de automatización de SIRA. He programado una serie de reglas y prioridades para que el sistema sepa cómo actuar según los datos que recibe de los sensores, siempre buscando proteger el cultivo y la estructura del invernadero.
+En este documento se detalla cómo funciona la lógica de automatización de SIRA. Se ha programado una serie de reglas y prioridades para que el sistema sepa cómo actuar según los datos que recibe de los sensores, siempre buscando proteger el cultivo y la estructura del invernadero.
 
 ---
 
@@ -9,7 +9,7 @@ En este documento detallo cómo funciona la lógica de automatización de SIRA. 
 Dado que el proyecto utiliza datos simulados, el sistema analiza las mediciones que entran en la base de datos cada pocos segundos y decide qué dispositivos (actuadores) deben encenderse o apagarse.
 
 ### Prioridades de Seguridad
-He establecido un orden de importancia para que las órdenes no se contradigan:
+Se ha establecido un orden de importancia para que las órdenes no se contradigan:
 1. **Seguridad Estructural**: Lo más importante es proteger el invernadero contra el viento fuerte o granizo.
 2. **Seguridad del Cultivo**: Evitar que las plantas se hielen o se quemen por el calor.
 3. **Optimización**: Mantener las mejores condiciones de luz y humedad para que las plantas crezcan bien.
@@ -18,7 +18,7 @@ He establecido un orden de importancia para que las órdenes no se contradigan:
 
 ## 2. Reglas de Automatización (Backend)
 
-A continuación explico las reglas que he programado para cada dispositivo:
+A continuación se explican las reglas programadas para cada dispositivo:
 
 ### Riego (Electroválvulas)
 - **Encendido**: Si la humedad del suelo baja del 60%.
@@ -44,7 +44,7 @@ Las luces dependen de dos factores: la luz natural y el horario de trabajo.
 
 ## 3. Control Manual y "Cortesía"
 
-Aunque el sistema es automático, he añadido una función para que el agricultor pueda tomar el control:
+Aunque el sistema es automático, se ha añadido una función para que el agricultor pueda tomar el control:
 - Si el usuario enciende o apaga un dispositivo manualmente desde el panel, el sistema automático "respeta" esa decisión durante 2 horas. 
 - Pasado ese tiempo, el sistema vuelve al modo automático para evitar descuidos (por ejemplo, dejarse el riego encendido toda la noche).
 

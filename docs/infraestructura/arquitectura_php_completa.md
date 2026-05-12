@@ -1,27 +1,27 @@
 # Documentación de la Lógica PHP - Proyecto SIRA
 
-En este documento explico cómo he organizado el código PHP que forma el frontend de SIRA. El objetivo ha sido crear una aplicación web funcional que se comunique de forma segura con la API del backend.
+En este documento se explica cómo se ha organizado el código PHP que forma el frontend de SIRA. El objetivo ha sido crear una aplicación web funcional que se comunique de forma segura con la API del backend.
 
 ---
 
 ## 1. Organización del Código
 
-Para que el proyecto sea modular y fácil de mantener, he dividido el código PHP en varias partes:
+Para que el proyecto sea modular y fácil de mantener, se ha dividido el código PHP en varias partes:
 
 ### Gestión de Infraestructura
 - **view_localidades.php**: Es la página de inicio del panel. Agrupa los datos del cliente por municipio y provincia.
 - **view_infrastructure.php**: Es el motor principal de visualización. Dependiendo de dónde haga clic el usuario, muestra las Localidades, las Parcelas o los Invernaderos, pasando los datos necesarios mediante variables de sesión o parámetros GET.
-- **Validación de datos**: En los formularios de alta (como añadir una parcela), he programado comprobaciones para asegurar que el código postal es correcto antes de guardar la información.
+- **Validación de datos**: En los formularios de alta (como añadir una parcela), se han programado comprobaciones para asegurar que el código postal es correcto antes de guardar la información.
 
 ### Módulos de Gestión (CRUD)
-- **Gestión de Usuarios**: He creado páginas para dar de alta y editar tanto a clientes como a administradores, comprobando siempre los permisos de cada usuario.
+- **Gestión de Usuarios**: Se han creado páginas para dar de alta y editar tanto a clientes como a administradores, comprobando siempre los permisos de cada usuario.
 - **Formularios Dinámicos**: Los formularios detectan quién está conectado. Por ejemplo, si eres un cliente, algunos campos críticos de los invernaderos aparecen bloqueados y solo los puede tocar un administrador.
 
 ---
 
 ## 2. Seguridad y Acceso
 
-He implementado un sistema de seguridad basado en tokens para proteger el acceso a los datos.
+Se ha implementado un sistema de seguridad basado en tokens para proteger el acceso a los datos.
 
 ### Uso de JWT (JSON Web Token)
 - **Comunicación Segura**: Tras el login, el servidor PHP guarda un token (JWT). En cada petición que el frontend hace a la API, se envía este token para validar quién es el usuario.
@@ -46,8 +46,8 @@ Este componente se encarga de cambiar el aspecto visual del dashboard según el 
 
 ## 4. Control de Estado
 
-- **Borrado Lógico**: En lugar de borrar definitivamente los datos de la base de datos, utilizo un campo llamado `activa`. Esto permite "archivar" elementos y recuperarlos si es necesario, evitando que se pierda el historial de los sensores.
-- **Restricción de Acceso**: He añadido comprobaciones al inicio de cada script de gestión para asegurar que un cliente no pueda entrar en las funciones de administración escribiendo la URL directamente.
+- **Borrado Lógico**: En lugar de borrar definitivamente los datos de la base de datos, se utiliza un campo llamado `activa`. Esto permite "archivar" elementos y recuperarlos si es necesario, evitando que se pierda el historial de los sensores.
+- **Restricción de Acceso**: Se han añadido comprobaciones al inicio de cada script de gestión para asegurar que un cliente no pueda entrar en las funciones de administración escribiendo la URL directamente.
 
 ---
 

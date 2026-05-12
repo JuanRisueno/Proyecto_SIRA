@@ -1,6 +1,6 @@
 # Guía de Variables de Entorno (.env) - Proyecto SIRA
 
-En el proyecto SIRA utilizo un archivo llamado `.env` para centralizar toda la configuración del sistema, desde las contraseñas de la base de datos hasta las claves de seguridad. Este archivo es fundamental para que el proyecto funcione en diferentes entornos (local o en el servidor) sin tener que cambiar el código fuente.
+En el proyecto SIRA se utiliza un archivo llamado `.env` para centralizar toda la configuración del sistema, desde las contraseñas de la base de datos hasta las claves de seguridad. Este archivo es fundamental para que el proyecto funcione en diferentes entornos (local o en el servidor) sin tener que cambiar el código fuente.
 
 ---
 
@@ -28,12 +28,12 @@ Estas variables las usan tanto el contenedor de la base de datos para crearse co
 
 ## 3. Configuración de Seguridad (JWT)
 
-Para que el sistema de login sea seguro, utilizo tokens JWT. Estas variables controlan cómo se generan y cuánto duran.
+Para que el sistema de login sea seguro, se utilizan tokens JWT. Estas variables controlan cómo se generan y cuánto duran.
 
 | Variable | Descripción | Detalle |
 | :--- | :--- | :--- |
 | `JWT_SECRET_KEY` | Es la clave secreta que usa el servidor para firmar los tokens. | Debe ser una cadena larga y aleatoria. |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | Tiempo que dura la sesión activa (en minutos). | He configurado 1440 (24h) con control de inactividad de 30m. |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Tiempo que dura la sesión activa (en minutos). | Se ha configurado 1440 (24h) con control de inactividad de 30m. |
 
 ---
 
@@ -47,7 +47,7 @@ El código PHP usa una constante para saber a qué dirección debe pedirle los d
 
 ## 5. Variables de Diseño (CSS Custom Properties)
 
-Para mantener la coherencia visual en todo el proyecto, he definido un sistema de tokens de diseño en el archivo `frontend/css/modules/variables.css`. Estas variables permiten cambiar el aspecto de toda la web desde un solo sitio.
+Para mantener la coherencia visual en todo el proyecto, se ha definido un sistema de tokens de diseño en el archivo `frontend/css/modules/variables.css`. Estas variables permiten cambiar el aspecto de toda la web desde un solo sitio.
 
 ### Colores y Estética
 | Variable | Descripción | Valor (Tema Oscuro) |
@@ -92,7 +92,7 @@ Para mantener la coherencia visual en todo el proyecto, he definido un sistema d
 
 ---
 
-**Importante para la seguridad**: El archivo `.env` nunca debe subirse a GitHub, por lo que está incluido en el archivo `.gitignore`. En el servidor de producción (AWS), he creado este archivo manualmente con contraseñas seguras.
+**Importante para la seguridad**: El archivo `.env` nunca debe subirse a GitHub, por lo que está incluido en el archivo `.gitignore`. En el servidor de producción (AWS), se ha creado este archivo manualmente con contraseñas seguras.
 
 ---
 **Documentación de Infraestructura - SIRA**  

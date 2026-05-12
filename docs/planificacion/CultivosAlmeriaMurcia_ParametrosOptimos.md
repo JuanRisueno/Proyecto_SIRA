@@ -1,6 +1,6 @@
 # Parámetros Óptimos de Cultivos - Almería y Murcia
 
-Este documento recoge los parámetros ambientales ideales para los cultivos más comunes en Almería y Murcia. He utilizado estos datos para configurar las reglas automáticas del sistema SIRA.
+Este documento recoge los parámetros ambientales ideales para los cultivos más comunes en Almería y Murcia. Se han utilizado estos datos para configurar las reglas automáticas del sistema SIRA.
 
 ## 1. Datos de Cultivos (Almería y Murcia)
 
@@ -27,7 +27,7 @@ Según los datos de superficie cultivada en invernaderos:
 
 ## 2. Tabla de Parámetros de Referencia
 
-He configurado el sistema con estos rangos ideales para que el simulador pueda mostrar cómo actúan los actuadores:
+Se ha configurado el sistema con estos rangos ideales para que el simulador pueda mostrar cómo actúan los actuadores:
 
 | Cultivo | Temp. Día (ºC) | Temp. Noche (ºC) | Humedad (%) | pH Óptimo | Riego (L/m²) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
@@ -52,7 +52,7 @@ He configurado el sistema con estos rangos ideales para que el simulador pueda m
 
 ## 4. Fuentes Consultadas
 
-He obtenido estos datos técnicos de las siguientes fuentes:
+Se han obtenido estos datos técnicos de las siguientes fuentes:
 1.  **Fundación Cajamar**: Guía de cultivos en invernadero.
 2.  **MAPA**: Fichas técnicas de cultivos.
 3.  **InfoAgro Almería**: Portal especializado en agricultura.

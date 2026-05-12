@@ -1,23 +1,23 @@
 # Gestión de Cultivos - Proyecto SIRA
 
-En este documento explico cómo he diseñado el sistema de gestión de cultivos en SIRA. He decidido usar una base de datos local de conocimientos para asegurar que el sistema sea rápido y funcione siempre, sin depender de conexiones a internet externas.
+En este documento se explica cómo se ha diseñado el sistema de gestión de cultivos en SIRA. Se ha decidido usar una base de datos local de conocimientos para asegurar que el sistema sea rápido y funcione siempre, sin depender de conexiones a internet externas.
 
 ---
 
 ## 1. Diseño del Sistema de Cultivos
 
-Para que el proyecto sea robusto y no falle durante la presentación, he descartado el uso de APIs externas (como Perenual). En su lugar, he creado una base de datos propia con la información de los cultivos más comunes.
+Para que el proyecto sea robusto y no falle durante la presentación, se ha descartado el uso de APIs externas (como Perenual). En su lugar, se ha creado una base de datos propia con la información de los cultivos más comunes.
 
 ### Ventajas de este diseño:
 - **Independencia**: El sistema funciona al 100% en local, sin necesidad de internet.
 - **Velocidad**: Las consultas son inmediatas al estar los datos en el mismo servidor.
-- **Sencillez**: He eliminado código complejo de conexión con servidores externos, centrándome en la lógica del proyecto.
+- **Sencillez**: Se ha eliminado código complejo de conexión con servidores externos, centrándose en la lógica del proyecto.
 
 ---
 
 ## 2. Funcionamiento para el Usuario
 
-He diseñado un proceso muy sencillo para que el agricultor configure sus invernaderos:
+Se ha diseñado un proceso muy sencillo para que el agricultor configure sus invernaderos:
 
 1.  **Selección asistida**: Al añadir un cultivo, el usuario puede elegir entre variedades típicas (Tomate, Pimiento, Sandía, Pepino, Melón). Al seleccionarlas, el sistema rellena automáticamente los valores ideales de temperatura y humedad.
 2.  **Modo libre**: Si el usuario cultiva algo diferente, puede elegir la opción "Personalizado" y escribir el nombre y los parámetros que él considere oportunos.
@@ -27,7 +27,7 @@ He diseñado un proceso muy sencillo para que el agricultor configure sus invern
 
 ## 3. Modelo de Datos (SQL)
 
-He creado una tabla maestra con los parámetros científicos de los cultivos seleccionados para la demo:
+Se ha creado una tabla maestra con los parámetros científicos de los cultivos seleccionados para la demo:
 
 ```sql
 -- Tabla con los datos de referencia
@@ -55,7 +55,7 @@ VALUES
 
 ## 4. Conclusión
 
-Este enfoque me permite demostrar que el sistema es capaz de gestionar reglas biológicas y de control climático de forma autónoma. Durante la defensa, podré mostrar cómo SIRA reacciona de forma diferente según el cultivo que hayamos configurado en cada nave.
+Este enfoque permite demostrar que el sistema es capaz de gestionar reglas biológicas y de control climático de forma autónoma. Durante la defensa, se podrá mostrar cómo SIRA reacciona de forma diferente según el cultivo que se haya configurado en cada nave.
 
 ---
 **Gestión de Cultivos - SIRA**  

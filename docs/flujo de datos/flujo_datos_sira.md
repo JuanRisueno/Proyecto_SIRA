@@ -1,6 +1,6 @@
 # Flujo de Datos en el Backend - Proyecto SIRA
 
-En este documento explico cómo viaja la información dentro del servidor de SIRA (la API REST). He diseñado esta arquitectura siguiendo los estándares de desarrollo con FastAPI para separar claramente las responsabilidades de cada parte del código.
+En este documento se explica cómo viaja la información dentro del servidor de SIRA (la API REST). Se ha diseñado esta arquitectura siguiendo los estándares de desarrollo con FastAPI para separar claramente las responsabilidades de cada parte del código.
 
 ---
 

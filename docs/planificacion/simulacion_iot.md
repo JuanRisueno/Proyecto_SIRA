@@ -1,12 +1,12 @@
 # Estrategia de Simulación IoT - Proyecto SIRA
 
-Como no disponemos de sensores físicos para la defensa del proyecto, he desarrollado un sistema de simulación por software que permite demostrar cómo reacciona el backend de SIRA ante diferentes situaciones climáticas.
+Dado que no se dispone de sensores físicos para la defensa del proyecto, se ha desarrollado un sistema de simulación por software que permite demostrar cómo reacciona el backend de SIRA ante diferentes situaciones climáticas.
 
 ---
 
 ## 1. Escenarios de Prueba (Presets)
 
-He creado una serie de escenarios fijos que puedo activar durante la presentación para mostrar el funcionamiento del sistema:
+Se han creado una serie de escenarios fijos que se pueden activar durante la presentación para mostrar el funcionamiento del sistema:
 
 1.  **Condiciones Ideales**: Todo funciona normal, el riego está apagado y las ventanas entreabiertas.
 2.  **Tormenta**: Simula viento fuerte y lluvia. El sistema debe cerrar las ventanas por seguridad.
@@ -18,7 +18,7 @@ He creado una serie de escenarios fijos que puedo activar durante la presentaci�
 
 ## 2. Funcionamiento Técnico del Simulador
 
-- **Inserción de datos**: He programado un script en Python que se conecta a la base de datos PostgreSQL e inserta nuevas mediciones cada 10 segundos.
+- **Inserción de datos**: Se ha programado un script en Python que se conecta a la base de datos PostgreSQL e inserta nuevas mediciones cada 10 segundos.
 - **Realismo**: Para que los datos no parezcan artificiales (líneas rectas), el script añade pequeñas variaciones aleatorias a los valores.
 - **Respuesta Automática**: El backend de SIRA analiza estos datos entrantes y decide al momento si debe activar o desactivar los actuadores (luces, riego, ventanas, etc.).
 
@@ -26,16 +26,16 @@ He creado una serie de escenarios fijos que puedo activar durante la presentaci�
 
 ## 3. Gráficas y Visualización
 
-Para mostrar los datos en el dashboard sin usar librerías externas pesadas (como Chart.js), he optado por dibujar las gráficas directamente con **SVG** desde PHP:
+Para mostrar los datos en el dashboard sin usar librerías externas pesadas (como Chart.js), se ha optado por dibujar las gráficas directamente con **SVG** desde PHP:
 
-- **Líneas sencillas**: Uso etiquetas `<polyline>` para unir los puntos de los sensores. Es un método muy ligero y compatible con cualquier navegador.
+- **Líneas sencillas**: Se usan etiquetas `<polyline>` para unir los puntos de los sensores. Es un método muy ligero y compatible con cualquier navegador.
 - **Refresco automático**: La página se recarga cada 10-15 segundos mediante una etiqueta HTML `<meta refresh>`, permitiendo ver cómo evolucionan los datos sin tener que pulsar F5.
 
 ---
 
 ## 4. Dispositivos Simulados
 
-Para el proyecto he seleccionado 5 sensores y 5 actuadores que cubren las necesidades básicas de un invernadero en nuestra zona (Almería/Murcia):
+Para el proyecto se han seleccionado 5 sensores y 5 actuadores que cubren las necesidades básicas de un invernadero en nuestra zona (Almería/Murcia):
 
 ### Sensores (Entrada)
 1. **Temperatura**: Para el control del clima interior.
