@@ -126,6 +126,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         headers={"WWW-Authenticate": "Bearer"},
     )
     
+    session_timeout_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="SESSION_TIMEOUT",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         cif_usuario: str = payload.get("sub")
@@ -158,7 +164,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
             # Sesión expirada por inactividad
             user.session_id = None
             db.commit()
-            raise session_invalidated_exception
+            raise session_timeout_exception
 
     # MONITOR DE ACTIVIDAD (Iron Fortress)
     # Actualizamos la huella digital del usuario en cada interacción (renovando el timeout)

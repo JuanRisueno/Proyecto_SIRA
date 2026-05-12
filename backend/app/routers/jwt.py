@@ -100,7 +100,18 @@ def login_for_access_token(
     }
 
 # ==========================================
-# 3. LOGOUT (CIERRE DE SESIÓN)
+# 3. VERIFICAR SESIÓN (IRON FORTRESS)
+# ==========================================
+
+@router.get("/verify", status_code=status.HTTP_200_OK)
+def verify_session(current_user: Cliente = Depends(auth.get_current_user)):
+    """
+    Endpoint ligero para verificar que el token y la sesión siguen activos.
+    """
+    return {"status": "valid", "rol": current_user.rol}
+
+# ==========================================
+# 4. LOGOUT (CIERRE DE SESIÓN)
 # ==========================================
 
 @router.post("/logout", status_code=status.HTTP_200_OK)

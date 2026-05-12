@@ -17,7 +17,7 @@ require_once 'api/api_sistema.php';
 
 // [IRON FORTRESS] Validación de Exclusividad de Sesión y Timeout
 // Realizamos una llamada ligera para verificar si el token sigue siendo el "maestro" y no ha caducado por inactividad
-$check_session = sira_api_call($token, "/api/v1/sistema/social");
+$check_session = sira_api_call($token, "/api/auth/verify");
 if ($check_session['code'] == 401 && isset($check_session['data']['detail'])) {
     if ($check_session['data']['detail'] === "SESSION_INVALIDATED") {
         session_destroy();
