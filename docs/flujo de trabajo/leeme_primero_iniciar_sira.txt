@@ -21,15 +21,15 @@
 ---
 ### PASO 2: Clonar el repositorio y Asignar Permisos
 
-1. En tu directorio personal, escribe este comando para descargar el proyecto (se creará la carpeta SIRA_Project):
-   gh repo clone JuanRisueno/SIRA_Project
+24. 1. En tu directorio personal, escribe este comando para descargar el proyecto (se creará la carpeta Proyecto_SIRA):
+25.    gh repo clone JuanRisueno/Proyecto_SIRA
 
 2. **Asigna los permisos totales** al usuario actual (sólo para esta carpeta):
-   sudo chown -R $USER:$USER SIRA_Project
-   chmod -R u+rwX SIRA_Project
+   sudo chown -R $USER:$USER Proyecto_SIRA
+   chmod -R u+rwX Proyecto_SIRA
 
 3. Entra en la carpeta del proyecto:
-   cd SIRA_Project
+   cd Proyecto_SIRA
 
 ---
 ### PASO 3: Configuración del entorno y Scripts Base
@@ -40,7 +40,7 @@
 2. **Abre VS Code y el Proyecto:**
    a) Inicia Visual Studio Code (puedes buscarlo en las aplicaciones).
    b) Ve al menú `File` > `Open Folder...`
-   c) Navega hasta tu directorio personal (`/home/sira/`) y selecciona la carpeta `SIRA_Project`. Haz clic en `OK`.
+   c) Navega hasta tu directorio personal (`/home/sira/`) y selecciona la carpeta `Proyecto_SIRA`. Haz clic en `OK`.
 
 3. **Rellena el fichero `.env` con tus credenciales. IMPORTANTE: tiene que ser el .env no el que está como ejemplo**
    Si este paso no se hace, no funcionara el docker compose. Solo se tiene que añadir tu usuario y tu contraseña con el mismo formato

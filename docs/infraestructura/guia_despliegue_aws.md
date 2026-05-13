@@ -64,8 +64,8 @@ Para poner en marcha el sistema, se clona el código del repositorio y se levant
 
 ```bash
 # Clonar el proyecto
-git clone https://github.com/MiUsuario/SIRA_Project.git
-cd SIRA_Project
+git clone https://github.com/MiUsuario/Proyecto_SIRA.git
+cd Proyecto_SIRA
 
 # Configurar el archivo .env con las contraseñas
 cp .env.example .env

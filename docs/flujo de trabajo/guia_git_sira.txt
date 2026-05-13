@@ -96,7 +96,7 @@ SECCIÓN ADICIONAL: VER Y CAMBIAR ENTRE RAMAS
 ---
 5. PROPONER TU CAMBIO (CREAR PULL REQUEST - PR)
 ---
-   5.1. Ve a la página del repositorio SIRA en GitHub (https://github.com/JuanRisueno/SIRA_Project).
+   5.1. Ve a la página del repositorio SIRA en GitHub (https://github.com/JuanRisueno/Proyecto_SIRA).
 
    5.2. Verás un aviso amarillo para crear una "Pull Request" desde tu rama. Haz clic ahí.
 

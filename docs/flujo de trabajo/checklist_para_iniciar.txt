@@ -5,7 +5,7 @@ CHECKLIST PARA INICIAR EL ENTORNO DE DESARROLLO SIRA
 ### 1. NAVEGAR Y ACTUALIZAR (Terminal de la VM)
 
 # 1.1. Navega a la carpeta del proyecto
-cd ~/SIRA_Project
+cd ~/Proyecto_SIRA
 
 # 1.2. Sincroniza tu repositorio local con el remoto
 git pull

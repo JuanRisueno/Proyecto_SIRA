@@ -36,13 +36,14 @@
 4. Arquitectura de Sistemas e Infraestructura
 5. Arquitectura de Software: Backend (FastAPI)
 6. Arquitectura de Software: Frontend (PHP)
-7. Lógica de Dominio: Sensores, Actuadores y Cultivos
-8. Protocolo de Seguridad "Iron Fortress"
-9. Despliegue en Producción (AWS)
-10. Análisis de Riesgos y Mitigaciones
-11. Planificación y Línea Temporal
-12. Auditoría Final y Conclusiones
-13. Autoría y Roles del Proyecto
+7. Identidad Visual y Design System (SIRA UX)
+8. Lógica de Dominio: Sensores, Actuadores y Cultivos
+9. Protocolo de Seguridad "Iron Fortress"
+10. Despliegue en Producción (AWS)
+11. Análisis de Riesgos y Mitigaciones
+12. Planificación y Línea Temporal
+13. Auditoría Final y Conclusiones
+14. Autoría y Roles del Proyecto
 
 <div style="page-break-after: always;"></div>
 
@@ -293,7 +294,7 @@ Para asegurar la ejecución sin intervención humana, el script se programa en e
 
 ```bash
 # Programación en crontab -e
-00 03 * * * /bin/bash /home/ubuntu/SIRA_Project/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
+00 03 * * * /bin/bash /home/ubuntu/Proyecto_SIRA/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
 ```
 
 <div style="page-break-after: always;"></div>
@@ -439,9 +440,87 @@ Se ha implementado una arquitectura CSS modular y basada en **Custom Properties 
 
 <div style="page-break-after: always;"></div>
 
-## 7. Lógica de Dominio: Sensores, Actuadores y Cultivos
+## 7. Identidad Visual y Design System (SIRA UX)
 
-### 7.1 Dispositivos Implementados
+### 7.1 Filosofía de Diseño
+
+El diseño de SIRA no es meramente estético; responde a una necesidad de **claridad operativa** en entornos agrícolas. Se basa en una **arquitectura de doble tema (Dark/Light)** que permite al usuario adaptar la interfaz a las condiciones lumínicas del campo o de la oficina.
+
+Aunque se ha optado prioritariamente por una estética *High-Tech Dark* (que reduce la fatiga visual y resalta los datos críticos), el sistema es totalmente funcional en modo claro, manteniendo la misma jerarquía de información.
+
+### 7.2 Paleta de Colores Oficial
+
+La coherencia cromática es el pilar de la interfaz. Se definen cuatro niveles de color para guiar la atención del usuario:
+
+<div align="center">
+<svg width="600" height="160" xmlns="http://www.w3.org/2000/svg">
+  <!-- Navy SIRA -->
+  <rect x="20" y="20" width="120" height="80" rx="8" fill="#0f172a" stroke="#2c3e50" stroke-width="2"/>
+  <text x="80" y="125" font-family="sans-serif" font-size="11" text-anchor="middle" font-weight="bold" fill="#2c3e50">Navy SIRA</text>
+  <text x="80" y="142" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">#0F172A</text>
+  
+  <!-- Emerald SIRA -->
+  <rect x="160" y="20" width="120" height="80" rx="8" fill="#10b981" stroke="#2c3e50" stroke-width="2"/>
+  <text x="220" y="125" font-family="sans-serif" font-size="11" text-anchor="middle" font-weight="bold" fill="#10b981">Esmeralda</text>
+  <text x="220" y="142" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">#10B981</text>
+
+  <!-- Technical Orange -->
+  <rect x="300" y="20" width="120" height="80" rx="8" fill="#ffab00" stroke="#2c3e50" stroke-width="2"/>
+  <text x="360" y="125" font-family="sans-serif" font-size="11" text-anchor="middle" font-weight="bold" fill="#d97706">Temp. Focus</text>
+  <text x="360" y="142" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">#FFAB00</text>
+
+  <!-- Technical Blue -->
+  <rect x="440" y="20" width="120" height="80" rx="8" fill="#00d1ff" stroke="#2c3e50" stroke-width="2"/>
+  <text x="500" y="125" font-family="sans-serif" font-size="11" text-anchor="middle" font-weight="bold" fill="#0099cc">Hum. Focus</text>
+  <text x="500" y="142" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#7f8c8d">#00D1FF</text>
+</svg>
+</div>
+
+| Categoría | HEX (Dark) | HEX (Light) | Uso Principal |
+|---|---|---|---|
+| **Base (Fondo)** | `#0f172a` | `#f8fafc` | Fondo principal y estructura. |
+| **Superficie** | `rgba(30,41,59,0.7)` | `#ffffff` | Tarjetas, paneles y contenedores. |
+| **Texto Main** | `#f8fafc` | `#0f172a` | Lectura de datos y navegación. |
+| **Primario** | `#10b981` | `#10b981` | Botones de acción y branding. |
+| **Acento Temp.** | `#ffab00` | `#d97706` | Datos de temperatura y alertas de calor. |
+| **Acento Hum.** | `#00d1ff` | `#0099cc` | Datos de humedad y riego. |
+| **Error** | `#ef4444` | `#b91c1c` | Alertas críticas y fallos. |
+
+<div style="page-break-after: always;"></div>
+
+### 7.3 Tipografía
+
+La legibilidad es crítica en un panel de control técnico. Se utiliza una jerarquía clara:
+- **Inter (Principal):** Fuente sans-serif de alta legibilidad para todos los datos del dashboard. Su diseño optimizado para pantallas permite leer valores numéricos rápidos sin error.
+- **Montserrat / Roboto:** Reservadas para la documentación oficial y elementos de identidad corporativa en portadas y cabeceras.
+
+### 7.4 Estándares de Interfaz (SIRA Standard-10)
+
+Para lograr una apariencia premium y moderna, SIRA sigue la regla del **Standard-10**:
+- **Radios de Contenedor (10px):** Todas las tarjetas (`.card`), paneles y ventanas de navegación usan un radio de 10px. Esto suaviza la rigidez de los datos y acerca el software a estándares de diseño actuales (estilo iOS/SaaS moderno).
+- **Radios de Interacción (4px):** Los elementos clicables (botones, inputs) usan un radio menor para mantener una sensación de precisión y control técnico.
+
+### 7.5 Glassmorphism y Filtros Cinemáticos
+
+La característica más distintiva de SIRA UX es su capacidad de **reacción visual al entorno**:
+- **Glassmorphism:** Los paneles usan fondos translúcidos con `backdrop-filter: blur(10px)`. Esto permite que los efectos climáticos del fondo (lluvia, nieve) sean visibles pero no interfieran con la lectura de los datos.
+- **Filtros de Clima:** Mediante CSS dinámico, la plataforma aplica filtros de color a toda la interfaz según el estado de los sensores:
+    - *Modo Calor:* Tonalidad sepia y brillo aumentado (`sepia(0.12) brightness(1.05)`).
+    - *Modo Tormenta:* Desaturación y tono azulado (`saturate(0.70) hue-rotate(-10deg)`).
+    - *Modo Ideal:* Contraste y saturación optimizados para máxima claridad.
+
+### 7.6 Dualidad de Temas (Dark & Light)
+
+SIRA implementa un sistema de temas dinámicos basado en atributos de datos (`data-theme`). Esta funcionalidad permite:
+- **Modo Oscuro (Default):** Optimizado para uso en interiores o baja luz, resaltando los verdes y azules tecnológicos sobre el Navy profundo.
+- **Modo Claro (High Visibility):** Diseñado para su uso en exteriores bajo luz solar directa. El fondo pasa a un blanco hueso (`#f8fafc`) y el texto a un azul oscuro profundo, garantizando que los datos sean legibles incluso con reflejos en la pantalla.
+- **Persistencia:** La elección del tema se vincula a la sesión del usuario, manteniendo la coherencia visual en todos los dispositivos de la explotación.
+
+<div style="page-break-after: always;"></div>
+
+## 8. Lógica de Dominio: Sensores, Actuadores y Cultivos
+
+### 8.1 Dispositivos Implementados
 
 **Sensores (Entrada de datos):**
 
@@ -465,7 +544,7 @@ Se ha implementado una arquitectura CSS modular y basada en **Custom Properties 
 
 <div style="page-break-before: always;"></div>
 
-### 7.2 Lógica de Automatización y Prioridades
+### 8.2 Lógica de Automatización y Prioridades
 
 El backend evalúa las mediciones entrantes y aplica las siguientes reglas por orden de prioridad:
 
@@ -499,7 +578,7 @@ El backend evalúa las mediciones entrantes y aplica las siguientes reglas por o
 </svg>
 </div>
 
-### 7.3 Parámetros Agronómicos por Cultivo
+### 8.3 Parámetros Agronómicos por Cultivo
 
 Los umbrales de automatización se adaptan al cultivo configurado en cada invernadero:
 
@@ -515,13 +594,13 @@ Los umbrales de automatización se adaptan al cultivo configurado en cada invern
 
 *Fuentes: Fundación Cajamar, MAPA, InfoAgro Almería.*
 
-### 7.4 Control Manual y "Modo Cortesía"
+### 8.4 Control Manual y "Modo Cortesía"
 
 Si el usuario activa o desactiva un actuador manualmente desde el panel, el sistema automático **respeta esa decisión durante 2 horas**. Pasado ese tiempo, la automatización se reactiva para prevenir descuidos (ej. riego abierto toda la noche).
 
 <div style="page-break-before: always;"></div>
 
-### 7.5 Estrategia de Simulación IoT
+### 8.5 Estrategia de Simulación IoT
 
 #### Justificación de la Decisión
 
@@ -554,7 +633,7 @@ El simulador incluye los siguientes escenarios climáticos pre-configurados, act
 
 <div style="page-break-after: always;"></div>
 
-## 8. Protocolo de Seguridad "Iron Fortress"
+## 9. Protocolo de Seguridad "Iron Fortress"
 
 La seguridad es un eje transversal en todo SIRA, implementada bajo el nombre en clave **Iron Fortress**.
 
@@ -606,7 +685,7 @@ La seguridad es un eje transversal en todo SIRA, implementada bajo el nombre en 
 
 <div style="page-break-before: always;"></div>
 
-### 8.1 Mecanismos de Seguridad Implementados
+### 9.1 Mecanismos de Seguridad Implementados
 
 | Mecanismo | Detalle |
 |---|---|
@@ -621,7 +700,7 @@ La seguridad es un eje transversal en todo SIRA, implementada bajo el nombre en 
 | **Almacenamiento seguro del JWT** | El token se guarda en la sesión PHP del servidor, no en localStorage del navegador. |
 | **Secretos fuera del repositorio** | El archivo `.env` está en `.gitignore`. Nunca se sube a GitHub. |
 
-### 8.2 Matriz de Riesgos
+### 9.2 Matriz de Riesgos
 
 | Riesgo | Impacto | Probabilidad | Medida |
 |---|---|---|---|
@@ -634,9 +713,9 @@ La seguridad es un eje transversal en todo SIRA, implementada bajo el nombre en 
 
 <div style="page-break-after: always;"></div>
 
-## 9. Despliegue en Producción (AWS)
+## 10. Despliegue en Producción (AWS)
 
-### 9.1 Infraestructura Cloud
+### 10.1 Infraestructura Cloud
 
 El sistema SIRA ha sido desplegado con éxito en **Amazon Web Services (AWS)** para la demo de la defensa del TFG.
 
@@ -649,7 +728,7 @@ El sistema SIRA ha sido desplegado con éxito en **Amazon Web Services (AWS)** p
 | **RAM** | 2 GB (+ 2 GB Swap configurado) |
 | **Security Group** | Puertos: 22 (SSH), 80 (HTTP), 443 (HTTPS), 8085 (Nginx) |
 
-### 9.2 Diagrama de Despliegue Cloud
+### 10.2 Diagrama de Despliegue Cloud
 
 <div align="center">
 <svg width="540" height="280" xmlns="http://www.w3.org/2000/svg">
@@ -697,7 +776,7 @@ El sistema SIRA ha sido desplegado con éxito en **Amazon Web Services (AWS)** p
 
 <div style="page-break-before: always;"></div>
 
-### 9.3 Proceso de Despliegue
+### 10.3 Proceso de Despliegue
 
 ```bash
 # 1. Configurar swap (instancia t3.small con 2 GB RAM)
@@ -708,8 +787,8 @@ sudo mkswap /swapfile && sudo swapon /swapfile
 sudo apt update && sudo apt install -y docker.io docker-compose
 
 # 3. Clonar el repositorio y configurar el entorno
-git clone https://github.com/JuanRisueno/SIRA_Project.git
-cd SIRA_Project && cp .env.example .env && nano .env
+git clone https://github.com/JuanRisueno/Proyecto_SIRA.git
+cd Proyecto_SIRA && cp .env.example .env && nano .env
 
 # 4. Levantar todos los servicios
 docker-compose up -d --build
@@ -719,7 +798,7 @@ docker-compose up -d --build
 
 <div style="page-break-after: always;"></div>
 
-## 10. Análisis de Riesgos y Mitigaciones
+## 11. Análisis de Riesgos y Mitigaciones
 
 | # | Riesgo | Categoría | Impacto | Medida Implementada |
 |---|---|---|---|---|
@@ -735,7 +814,7 @@ docker-compose up -d --build
 
 <div style="page-break-after: always;"></div>
 
-## 11. Planificación y Línea Temporal
+## 12. Planificación y Línea Temporal
 
 El proyecto se ha desarrollado en **6 fases** a lo largo del curso 2025-2026:
 
@@ -757,9 +836,9 @@ El proyecto se ha desarrollado en **6 fases** a lo largo del curso 2025-2026:
 
 <div style="page-break-after: always;"></div>
 
-## 12. Auditoría Final y Conclusiones
+## 13. Auditoría Final y Conclusiones
 
-### 12.1 Resultado de la Auditoría Técnica
+### 13.1 Resultado de la Auditoría Técnica
 
 Tras la revisión final de todos los componentes del sistema:
 
@@ -773,7 +852,7 @@ Tras la revisión final de todos los componentes del sistema:
 | **Seguridad (Iron Fortress)** | ✅ Auditada | Bcrypt, JWT, SID, Sliding Window, historial de contraseñas. |
 | **Despliegue AWS** | ✅ Operativo | EC2 t3.small con Swap, Security Groups configurados. |
 
-### 12.2 Conclusión
+### 13.2 Conclusión
 
 El sistema SIRA representa una solución tecnológica completa y funcional para la gestión automatizada del riego en explotaciones agrícolas. El proyecto demuestra la integración de competencias clave del ciclo ASIR:
 
@@ -787,7 +866,7 @@ El sistema SIRA representa una solución tecnológica completa y funcional para 
 
 <div style="page-break-after: always;"></div>
 
-## 13. Autoría y Roles del Proyecto
+## 14. Autoría y Roles del Proyecto
 
 El desarrollo integral de SIRA ha sido liderado por el siguiente equipo técnico:
 

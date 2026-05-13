@@ -27,7 +27,7 @@
 ## 📦 Estructura del Proyecto
 
 ```
-SIRA_Project/
+Proyecto_SIRA/
 ├── backend/            # Backend API (Python/FastAPI)
 │   ├── app/            # Lógica de la API, modelos y rutas
 │   ├── database/       # Scripts SQL y configuración de BBDD
@@ -97,8 +97,8 @@ El diseño del frontend se ha centrado en la **estética premium** y la **eficie
 1. **Clonar el repositorio**
 
 ```bash
-git clone https://github.com/JuanRisueno/SIRA_Project.git
-cd SIRA_Project
+git clone https://github.com/JuanRisueno/Proyecto_SIRA.git
+cd Proyecto_SIRA
 ```
 
 2. **Configurar variables de entorno**

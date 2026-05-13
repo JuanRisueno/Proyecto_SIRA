@@ -11,7 +11,7 @@
 
 # 1. CONFIGURACIÓN
 # ----------------
-ORIGEN="$HOME/SIRA_Project"
+ORIGEN="$HOME/Proyecto_SIRA"
 RAIZ_BACKUPS="$HOME/sira_backups"
 
 # Identificadores de tiempo actuales
@@ -100,7 +100,7 @@ nice -n 19 tar -czf "$DESTINO_FINAL/codigo_fuente.tar.gz" \
     --exclude='*.pyc' \
     --exclude='pg_data' \
     --exclude='.DS_Store' \
-    -C "$HOME" "SIRA_Project"
+    -C "$HOME" "Proyecto_SIRA"
 
 if [ $? -ne 0 ]; then
     echo -e "${ROJO}❌ Error al comprimir.${NC}"

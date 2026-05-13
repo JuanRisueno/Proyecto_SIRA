@@ -78,7 +78,7 @@ Para asegurar la continuidad del sistema, se ha implementado un script de **back
 
 **Configuración de automatización:**
 ```bash
-00 03 * * * /bin/bash /home/ubuntu/SIRA_Project/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
+00 03 * * * /bin/bash /home/ubuntu/Proyecto_SIRA/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
 ```
 
 ---
