@@ -23,7 +23,7 @@ $modo_edicion_social = $modo_edicion_social ?? false;
             <div class="footer-brand">
                 <img src="<?= $base_url ?>/assets/img/logo-full.svg" alt="SIRA Logo" class="footer-logo">
                 <p class="footer-description">
-                    <strong>SIRA Project</strong> — Sistema Integral de Riego Automático. 
+                    <strong>Proyecto SIRA</strong> — Sistema Integral de Riego Automático. 
                     Monitorización y gestión dinámica de infraestructura agrícola mediante IoT.
                 </p>
             </div>
@@ -33,7 +33,7 @@ $modo_edicion_social = $modo_edicion_social ?? false;
                 <span class="status-header">Estado de Conectividad</span>
                 <div class="status-item">
                     <div class="pulse-dot"></div>
-                    <span>SIRA API: Operativa</span>
+                    <span>Proyecto SIRA API: Operativa</span>
                 </div>
                 <div class="status-item">
                     <div class="pulse-dot" style="background: #34d399;"></div>
@@ -143,7 +143,7 @@ $modo_edicion_social = $modo_edicion_social ?? false;
 
         <!-- 2. Barra de Metadatos Inferior -->
         <div class="sira-footer-meta">
-            <p>© <?= date('Y') ?> SIRA Project — Diseñado para una agricultura eficiente y sostenible.</p>
+            <p>© <?= date('Y') ?> Proyecto SIRA — Diseñado para una agricultura eficiente y sostenible.</p>
             <p>
                 Versión <span class="version-tag">v1.0.1</span> 
                 | Estado: <span style="font-family: monospace; opacity: 0.7;">Estable (TFG Final)</span>

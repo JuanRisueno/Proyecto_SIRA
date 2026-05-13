@@ -46,7 +46,7 @@ except Exception as e:
 
 # --- 2. INICIALIZACIÓN DE LA APP ---
 app = FastAPI(
-    title="SIRA API",
+    title="Proyecto SIRA API",
     description="Backend para el Sistema Integral de Riego Automático",
     version="1.0.0"
 )
@@ -67,4 +67,4 @@ app.include_router(sistema.router)
 @app.get("/")
 def read_root():
     """Endpoint para comprobar desde Postman que el servidor arranca."""
-    return {"mensaje": "SIRA API v1.0: Sistema Operativo y Escuchando."}
+    return {"mensaje": "Proyecto SIRA API v1.0: Sistema Operativo y Escuchando."}

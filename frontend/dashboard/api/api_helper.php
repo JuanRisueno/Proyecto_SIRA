@@ -1,6 +1,6 @@
 <?php
 /**
- * api_helper.php - Funciones base para comunicación con SIRA API
+ * api_helper.php - Funciones base para comunicación con Proyecto SIRA API
  */
 
 /**

@@ -53,7 +53,7 @@ def consultar_municipio_externo(nombre: str) -> List[Dict]:
     resultados = []
     try:
         # Nominatim requiere un User-Agent descriptivo
-        headers = {'User-Agent': 'SIRA-Project/1.0 (TFG-Development)'}
+        headers = {'User-Agent': 'Proyecto-SIRA/1.0 (TFG-Development)'}
         url = f"https://nominatim.openstreetmap.org/search?q={nombre}&countrycodes=es&format=json&addressdetails=1&limit=50"
         
         response = requests.get(url, headers=headers, timeout=5)
