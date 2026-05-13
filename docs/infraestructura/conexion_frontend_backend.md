@@ -4,7 +4,7 @@ Este documento explica cómo se estructura y comunica el sistema, que cuenta con
 
 ## 1. Visión General de la Arquitectura
 
-El proyecto SIRA sigue un modelo de arquitectura **Cliente-Servidor (API RESTful)** con una clara separación de responsabilidades:
+El proyecto SIRA sigue un modelo de arquitectura **Cliente-Servidor (API REST)** con una clara separación de responsabilidades:
 - **Backend (Python + FastAPI):** Actúa como el proveedor exclusivo de datos y de la lógica de negocio profunda. Es el único que interactúa directamente con la Base de Datos (PostgreSQL).
 - **Frontend (PHP + HTML + CSS):** Actúa como el consumidor de la API. Se encarga de la presentación de los datos, la gestión de la sesión del usuario a nivel web, y el renderizado de la interfaz gráfica.
 

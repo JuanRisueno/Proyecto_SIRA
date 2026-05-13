@@ -9,9 +9,10 @@ Esta guía explica los pasos seguidos para desplegar el proyecto SIRA en la nube
 Para este proyecto, se ha utilizado el servicio **EC2** de Amazon para crear un servidor virtual.
 
 ### Elección de la máquina
-*   **Instancia**: Se ha usado una `t2.micro` (disponible en la capa gratuita de AWS). 
-*   **Sistema Operativo**: **Ubuntu Server 24.04 LTS**.
-*   **Memoria Swap**: Como la instancia gratuita solo tiene 1 GB de RAM, se ha configurado un archivo Swap de 2GB para asegurar que la base de datos y la API no se queden sin memoria y el sistema no se caiga.
+*   **Instancia**: Se ha usado una `t3.small` en la región **us-east-1** (Norte de Virginia).
+*   **Almacenamiento**: Disco SSD de **8 GB** (General Purpose SSD).
+*   **SO**: Ubuntu Server 24.04 LTS.
+*   **Memoria Swap**: Aunque la instancia tiene 2 GB de RAM, se ha configurado un archivo Swap de 2GB adicional para asegurar la estabilidad absoluta de la base de datos y la API ante picos de carga.
 
 ---
 

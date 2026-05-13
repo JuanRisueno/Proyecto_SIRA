@@ -92,7 +92,7 @@ SIRA ha sido diseñado teniendo en mente al agricultor profesional con explotaci
 
 - **Portabilidad**: El sistema debe poder desplegarse en local y en la nube (AWS) sin modificar el código fuente.
 - **Seguridad**: Ninguna contraseña se almacenará en texto plano. Toda comunicación interna se validará mediante JWT.
-- **Eficiencia**: El sistema debe funcionar en hardware modesto (instancia EC2 t2.micro con 1 GB de RAM).
+- **Eficiencia**: El sistema debe funcionar en hardware modesto (instancia EC2 t3.small con 2 GB de RAM).
 - **Independencia**: Sin dependencias de APIs externas. La base de conocimientos agronómicos es propia y local.
 
 <div style="page-break-after: always;"></div>
@@ -643,10 +643,11 @@ El sistema SIRA ha sido desplegado con éxito en **Amazon Web Services (AWS)** p
 | Parámetro | Valor |
 |---|---|
 | **Servicio** | Amazon EC2 |
-| **Tipo de instancia** | t2.micro (capa gratuita) |
-| **Sistema Operativo** | Ubuntu Server 24.04 LTS |
-| **RAM** | 1 GB (+ 2 GB Swap configurado) |
-| **Acceso** | SSH (puerto 22) + HTTP (puerto 80) |
+| **Tipo de instancia** | t3.small |
+| **Región** | us-east-1 (N. Virginia) |
+| **Almacenamiento** | 8 GB EBS (Root Volume) |
+| **RAM** | 2 GB (+ 2 GB Swap configurado) |
+| **Security Group** | Puertos: 22 (SSH), 80 (HTTP), 443 (HTTPS), 8085 (Nginx) |
 
 ### 9.2 Diagrama de Despliegue Cloud
 
@@ -699,7 +700,7 @@ El sistema SIRA ha sido desplegado con éxito en **Amazon Web Services (AWS)** p
 ### 9.3 Proceso de Despliegue
 
 ```bash
-# 1. Configurar swap (instancia t2.micro con 1 GB RAM)
+# 1. Configurar swap (instancia t3.small con 2 GB RAM)
 sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile
 sudo mkswap /swapfile && sudo swapon /swapfile
 
@@ -770,7 +771,7 @@ Tras la revisión final de todos los componentes del sistema:
 | **Base de Datos (PostgreSQL)** | ✅ Normalizada | Esquema 3FN, borrado lógico, backups configurados. |
 | **Infraestructura (Docker/Nginx)** | ✅ Productiva | Despliegue local y AWS verificado. |
 | **Seguridad (Iron Fortress)** | ✅ Auditada | Bcrypt, JWT, SID, Sliding Window, historial de contraseñas. |
-| **Despliegue AWS** | ✅ Operativo | EC2 t2.micro con Swap, Security Groups configurados. |
+| **Despliegue AWS** | ✅ Operativo | EC2 t3.small con Swap, Security Groups configurados. |
 
 ### 12.2 Conclusión
 
