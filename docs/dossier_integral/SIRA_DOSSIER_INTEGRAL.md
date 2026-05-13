@@ -1,6 +1,6 @@
 # SIRA: Sistema Integral de Riego Automático
 
-**Dossier Técnico Maestro — Biblia del Proyecto (Versión 1.0 Final)**
+**Documentación Final del Proyecto (Versión 1.0 Final)**
 
 <br><br><br>
 

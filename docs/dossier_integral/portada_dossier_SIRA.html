@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        width: 210mm;
+        height: 297mm;
+        background-color: #ffffff;
+        color: #0f172a;
+        position: relative;
+        overflow: hidden; 
+    }
+    
+    .top-bar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 15mm;
+        background-color: #10b981;
+    }
+    
+    .header {
+        position: absolute;
+        top: 40mm;
+        right: 25mm;
+        text-align: right;
+        border-right: 5px solid #10b981;
+        padding-right: 18px;
+    }
+    .header h3 {
+        margin: 0;
+        font-size: 14pt;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    .header p {
+        margin: 8px 0 0 0;
+        font-size: 12pt;
+        font-weight: 400;
+        color: #0f172a;
+    }
+
+    .hero {
+        position: absolute;
+        top: 100mm;
+        left: 25mm;
+        width: calc(210mm - 50mm);
+    }
+    .logo-container {
+        margin-bottom: 50px;
+    }
+    .logo-img {
+        max-width: 420px;
+        height: auto;
+    }
+    
+    .title-box {
+        padding-left: 18px;
+        border-left: 5px solid #10b981;
+    }
+    .title {
+        font-size: 28pt;
+        font-weight: 300;
+        line-height: 1.2;
+        color: #0f172a;
+        margin: 0 0 18px 0;
+    }
+    .title .bold {
+        font-weight: 900;
+        color: #0f172a;
+    }
+    .subtitle {
+        font-size: 18pt;
+        font-weight: 700;
+        color: #10b981;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 0;
+    }
+    .version {
+        font-size: 14pt;
+        color: #64748b;
+        margin-top: 15px;
+    }
+    
+    .footer-section {
+        position: absolute;
+        bottom: 30mm;
+        left: 25mm;
+        width: calc(210mm - 50mm);
+        border-top: 2px solid #e2e8f0;
+        padding-top: 25px;
+    }
+    
+    .authors-info {
+        float: left;
+        width: 65%;
+    }
+    .meta-info {
+        float: right;
+        width: 35%;
+        text-align: right;
+    }
+    
+    .label {
+        font-size: 10pt;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+    .name {
+        font-size: 12pt; /* Reducido de 15pt a 12pt para evitar saltos de línea */
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 8px;
+        white-space: nowrap; /* Fuerza a que ocupe solo una línea */
+    }
+    .meta-text {
+        font-size: 12pt;
+        color: #64748b;
+        margin: 5px 0;
+    }
+    .meta-bold {
+        font-weight: 700;
+        color: #0f172a;
+    }
+</style>
+</head>
+<body>
+    <div class="top-bar"></div>
+    
+    <div class="header">
+        <h3>Trabajo de Fin de Grado</h3>
+        <p>Administración de Sistemas Informáticos en Red (ASIR)</p>
+        <p>IES / Centro de Formación Profesional</p>
+    </div>
+    
+    <div class="hero">
+        <div class="logo-container">
+            <img src="data:image/png;base64,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" class="logo-img" alt="SIRA Logo" />
+        </div>
+        
+        <div class="title-box">
+            <h2 class="title"><span class="bold">Sistema Integral</span> de<br>Riego Automático</h2>
+            <div class="subtitle">Dossier Técnico Maestro</div>
+            <div class="version">Documentación Final del Proyecto &middot; Versión 1.0 Final</div>
+        </div>
+    </div>
+    
+    <div class="footer-section">
+        <div class="authors-info">
+            <div class="label">Equipo de Desarrollo Técnico</div>
+            <div class="name">Juan Risueño</div>
+            <div class="name">Jorge Pedro López</div>
+            <div class="name">Alfonso Navarro</div>
+        </div>
+        <div class="meta-info">
+            <div class="meta-text"><span class="meta-bold">Linares, España</span></div>
+            <div class="meta-text">Mayo de 2026</div>
+        </div>
+    </div>
+</body>
+</html>
