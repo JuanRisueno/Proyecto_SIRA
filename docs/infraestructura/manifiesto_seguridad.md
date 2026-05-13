@@ -69,6 +69,17 @@ En la versión actual del proyecto (orientada a la demostración del TFG), la ca
 | **Fuerza Bruta** | Alto | Contraseñas complejas y hashing con Bcrypt. |
 | **Fuga de datos** | Crítico | Uso de `.gitignore` para archivos de configuración. |
 | **Robo de sesión** | Alto | Cierre por inactividad y almacenamiento en sesión PHP. |
+| **Pérdida de datos** | Crítico | Backups graduales (Anual/Mensual/Diario) con rotación automática. |
+
+---
+
+## 6. Resiliencia y Recuperación
+Para asegurar la continuidad del sistema, se ha implementado un script de **backup inteligente** (`backup_sira.sh`) automatizado mediante **Crontab**. Este sistema gestiona la rotación de copias de seguridad de forma automática, garantizando que siempre existan puntos de restauración históricos.
+
+**Configuración de automatización:**
+```bash
+00 03 * * * /bin/bash /home/ubuntu/SIRA_Project/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
+```
 
 ---
 

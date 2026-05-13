@@ -263,10 +263,38 @@ Toda la configuración sensible se centraliza en un archivo `.env` excluido del 
 |---|---|---|---|
 | `SIRA_PORT` | Puerto de exposición de Nginx | `8085` | `80` |
 | `DB_USER` | Usuario de PostgreSQL | `juanrisueno` | *(seguro)* |
-| `DB_PASSWORD` | Contraseña de PostgreSQL | *(local)* | *(seguro)* |
-| `DB_NAME` | Nombre de la base de datos | `sira_db` | `sira_db` |
-| `JWT_SECRET_KEY` | Clave de firma de tokens JWT | *(local)* | *(seguro)* |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | Duración máxima de sesión | `1440` (24h) | `1440` |
+| `DB_PASSWORD` | Contraseña de PostgreSQL | *(local)* | *(seguro)* |
+
+<div style="page-break-before: always;"></div>
+
+### 4.4 Estrategia de Copias de Seguridad (Backups)
+
+Para garantizar la integridad de los datos ante fallos críticos o errores humanos, se ha implementado un sistema de **backups graduales inteligentes** mediante el script `scripts/backup_sira.sh`.
+
+#### Lógica de Decisión (Cerebro de Backup)
+
+El script no se limita a copiar archivos, sino que analiza el historial para optimizar el espacio en disco:
+
+1. **Copia Anual**: Si es la primera ejecución del año, genera un backup en la carpeta `/anuales`. Se conservan las últimas **2 copias**.
+2. **Copia Mensual**: Si ya hay anual pero es el primer backup del mes, se guarda en `/mensuales`. Se conservan las últimas **3 copias**.
+3. **Copia Diaria**: En cualquier otro caso, genera un backup en `/diarios`. Se conservan las últimas **10 copias**.
+
+#### Características Técnicas
+
+- **Exclusiones Inteligentes**: Para optimizar el tamaño, el script ignora directorios pesados o innecesarios como `.git`, `venv`, `__pycache__` y los datos crudos de la base de datos (que se gestionan mediante volcados SQL independientes).
+- **Prioridad de Sistema**: Utiliza el comando `nice -n 19` para realizar la compresión con la menor prioridad de CPU, evitando que el proceso de backup afecte al rendimiento de la API en producción.
+- **Autogestión de Espacio**: Implementa una lógica de **rotación automática** que elimina las copias más antiguas una vez superado el límite configurado para cada tipo.
+- **Metadatos**: Cada copia incluye un archivo `info_backup.txt` con la fecha, el usuario que lo lanzó y el tipo de backup realizado.
+
+#### Automatización (Crontab)
+
+Para asegurar la ejecución sin intervención humana, el script se programa en el `crontab` del sistema (Ubuntu en AWS). Se recomienda una ejecución diaria a una hora de baja carga (ej. 03:00 AM):
+
+```bash
+# Programación en crontab -e
+00 03 * * * /bin/bash /home/ubuntu/SIRA_Project/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
+```
 
 <div style="page-break-after: always;"></div>
 
@@ -702,6 +730,7 @@ docker-compose up -d --build
 | 6 | Ataque de inyección SQL | Seguridad | Crítico | ORM SQLAlchemy parametrizado (0 SQL concatenado) |
 | 7 | Robo de token JWT | Seguridad | Alto | Token en sesión PHP, no en localStorage |
 | 8 | Instancia EC2 sin memoria suficiente | Cloud | Alto | 2 GB Swap + monitorización de memoria |
+| 9 | Corrupción o pérdida de datos | Base de Datos | Crítico | Sistema de backups graduales (Anual/Mensual/Diario) con rotación |
 
 <div style="page-break-after: always;"></div>
 
