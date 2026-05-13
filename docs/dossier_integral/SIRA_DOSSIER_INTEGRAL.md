@@ -1,4 +1,4 @@
-# SIRA: Sistema Integral de Riego Automático
+# Proyecto SIRA: Sistema Integral de Riego Automático
 
 **Documentación Final del Proyecto (Versión 1.0 Final)**
 
@@ -18,7 +18,7 @@
 
 | Integrante | Rol Principal |
 |---|---|
-| **Juan Risueño** | Arquitectura, Backend (FastAPI), Seguridad (Iron Fortress), Cloud (AWS) |
+| **Juan Risueño** | Arquitectura de Sistemas, Backend (FastAPI), Seguridad (Iron Fortress), Cloud (AWS) |
 | **Jorge Pedro López** | Coordinación, Diseño E/R, Frontend (PHP), Hardware/IoT |
 | **Alfonso Navarro** | Base de Datos (SQL), Normalización, CSS, Documentación Técnica |
 
@@ -884,6 +884,6 @@ El desarrollo integral de SIRA ha sido liderado por el siguiente equipo técnico
 
 <br>
 
-**SIRA Project — Dossier Técnico Maestro**
+**Proyecto SIRA — Dossier Técnico Maestro**
 *Versión 1.0 Final — Mayo 2026*
 *Trabajo de Fin de Grado — ASIR*
