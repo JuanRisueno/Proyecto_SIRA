@@ -297,6 +297,9 @@ Para asegurar la ejecución sin intervención humana, el script se programa en e
 00 03 * * * /bin/bash /home/ubuntu/Proyecto_SIRA/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
 ```
 
+> [!IMPORTANTE!]
+> **Estado en Producción:** Este mecanismo de automatización se encuentra **activo y verificado** en la infraestructura de AWS EC2 del proyecto, garantizando la persistencia ante desastres de forma autónoma.
+
 <div style="page-break-after: always;"></div>
 
 ## 5. Arquitectura de Software: Backend (FastAPI)
