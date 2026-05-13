@@ -90,6 +90,47 @@ El sistema opera mediante una **Separación Estricta de Responsabilidades**:
 
 ---
 
+## 🛠️ Comandos de Utilidad
+
+Para la gestión diaria de la infraestructura con Docker Compose:
+
+- **Levantar en segundo plano:** `docker compose up -d`
+- **Ver logs en tiempo real:** `docker compose logs -f`
+- **Reiniciar un servicio específico:** `docker compose restart api`
+- **Acceso a la base de datos:** `docker compose exec db psql -U sira_user -d sira_db`
+- **Limpieza total:** `docker compose down -v`
+
+---
+
+## 🧪 Desarrollo Local (Sin Docker)
+
+Si prefieres ejecutar el backend de forma nativa para depuración:
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+*La API estará disponible en `http://localhost:8000`.*
+
+---
+
+## 🩺 Verificación y Pruebas Rápidas
+
+Puedes verificar el estado de los servicios mediante `curl`:
+
+```bash
+# Verificar Salud del API
+curl -s http://localhost:8085/api/
+
+# Verificar Documentación
+curl -I http://localhost:8085/api/docs
+```
+
+---
+
 ## 📊 Modelado de Datos (E/R)
 
 ```mermaid
