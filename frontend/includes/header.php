@@ -90,7 +90,7 @@ $base_url   = str_replace($_doc_root, '', $_front_dir);
         <meta http-equiv="refresh" content="3;url=<?= $auto_redirect ?>">
     <?php endif; ?>
     <!-- CSS Base: Variables globales, reset y componentes compartidos -->
-    <link rel="stylesheet" href="<?= $base_url ?>/css/style.css?v=1.1">
+    <link rel="stylesheet" href="<?= $base_url ?>/css/style.css?v=1.3">
     <!-- CSS específico de esta página -->
     <?php if ($page_css): ?>
         <link rel="stylesheet" href="<?= $base_url ?>/css/<?= htmlspecialchars($page_css) ?>.css?v=1.1">

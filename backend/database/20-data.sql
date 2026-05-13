@@ -165,7 +165,7 @@ INSERT INTO TIPO_ACTUADOR (nombre_tipo) VALUES
 -- User: admin / Pass: admin1234
 -- User: B04XXXXXX / Pass: sol1234
 INSERT INTO CLIENTE (nombre_empresa, cif, email_admin, telefono, persona_contacto, hash_contrasena, rol, debe_cambiar_pw) VALUES
-('SIRA Root', 'root', 'admin@sira.com', '000000000', 'Root', '$2b$12$EEavMHUnjerHr0xWz9GeReqhapgmTqksP3ZR76pV05xHiE4a7YtVW', 'root', TRUE),
+('SIRA ROOT', 'root', 'admin@sira.com', '000000000', 'Root', '$2b$12$EEavMHUnjerHr0xWz9GeReqhapgmTqksP3ZR76pV05xHiE4a7YtVW', 'root', TRUE),
 ('SIRA Administración', 'admin', 'admin@sira.com', '000000000', 'Admin', '$2b$12$Sk4MaDiCEMNeME/dVGdb5eKDw1hlIhCPFRSDdS46vaj1Ndc6XFM3S', 'admin', TRUE),
 ('Invernaderos El Sol de Almería S.L.', 'B04XXXXXX', 'antonio.sol@gmail.com', '600112233', 'Antonio', '$2b$12$FMW2W10Fwj6ms1XitDc01.sM94ITA3AOQc8Qc1u9t.3M2Sfy3K3c.', 'cliente', TRUE),
 ('Cultivos David Martín', 'A12345678', 'david@cultivosdm.com', '950111222', 'David Martín', '$2b$12$FMW2W10Fwj6ms1XitDc01.sM94ITA3AOQc8Qc1u9t.3M2Sfy3K3c.', 'cliente', TRUE),

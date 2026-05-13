@@ -30,11 +30,23 @@ $todos_los_clientes = array_filter($todos_los_clientes, function($c) use ($ver_o
                     <div class="card-title-group">
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <h3 title="<?= htmlspecialchars($cli['nombre_empresa']) ?>">
-                                <?= htmlspecialchars($cli['nombre_empresa']) ?>
+                                <?php 
+                                    if ($cli['rol'] === 'root') echo "SIRA ROOT";
+                                    elseif ($cli['rol'] === 'admin') echo "SIRA ADMIN";
+                                    else echo htmlspecialchars($cli['nombre_empresa']);
+                                ?>
                             </h3>
                         </div>
                         <div class="card-subtitle">
-                            <span>🏢 SIRA CLIENTE</span>
+                            <span>
+                                <svg width="14" height="14" viewBox="0 0 50 50" class="sira-icon-card" style="display: inline-block; vertical-align: middle;">
+                                    <path d="M25 35V18" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+                                    <path d="M18 30C18 36 32 36 32 30C32 24 18 26 18 18" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                                    <path d="M25 18C25 18 34 13 40 4C30 5 25 18 25 18Z" fill="#10b981"/>
+                                    <path d="M25 18C25 18 16 13 10 4C20 5 25 18 25 18Z" fill="#10b981"/>
+                                </svg>
+                                SIRA <?= strtoupper($cli['rol']) ?>
+                            </span>
                             <span style="opacity: 0.3;">|</span>
                             <span>#<?= str_pad($cli['cliente_id'], 4, '0', STR_PAD_LEFT) ?></span>
                         </div>
@@ -154,10 +166,19 @@ $todos_los_clientes = array_filter($todos_los_clientes, function($c) use ($ver_o
                         <td><span class="list-badge-tech badge-muted"><?= $cli['cliente_id'] ?></span></td>
                         <td>
                             <div class="list-cell-main">
-                                <span class="list-main-icon">🏢</span>
+                                <svg width="18" height="18" viewBox="0 0 50 50" class="sira-icon-list" style="display: inline-block; vertical-align: middle;">
+                                    <path d="M25 35V18" stroke="#10b981" stroke-width="3.5" stroke-linecap="round"/>
+                                    <path d="M18 30C18 36 32 36 32 30C32 24 18 26 18 18" stroke="#10b981" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                                    <path d="M25 18C25 18 34 13 40 4C30 5 25 18 25 18Z" fill="#10b981"/>
+                                    <path d="M25 18C25 18 16 13 10 4C20 5 25 18 25 18Z" fill="#10b981"/>
+                                </svg>
                                 <div class="list-main-stack">
                                     <strong class="list-title" title="<?= htmlspecialchars($cli['nombre_empresa']) ?>" style="line-height: 1.3; margin-bottom: 2px;">
-                                        <?= htmlspecialchars($cli['nombre_empresa']) ?>
+                                        <?php 
+                                            if ($cli['rol'] === 'root') echo "SIRA ROOT";
+                                            elseif ($cli['rol'] === 'admin') echo "SIRA ADMIN";
+                                            else echo htmlspecialchars($cli['nombre_empresa']);
+                                        ?>
                                     </strong>
                                     <div style="display: flex; align-items: center; gap: 6px;">
                                         <span class="list-subtitle" style="margin: 0;">Entorno Productivo</span>
@@ -197,8 +218,6 @@ $todos_los_clientes = array_filter($todos_los_clientes, function($c) use ($ver_o
 <!-- Mensaje No Resultados -->
 <?php if (empty($todos_los_clientes)): ?>
 <div class="card empty-state-premium" style="padding: 3.5rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: rgba(255, 255, 255, 0.02); border: 1px dashed rgba(255, 255, 255, 0.1); border-radius: var(--radius-container); margin: 2rem 0;">
-    
-    <div class="empty-visual-wrapper" style="margin-bottom: 1.5rem; position: relative;">
         <span style="font-size: 3.8rem; display: block; filter: drop-shadow(0 8px 15px rgba(0,0,0,0.4));"><?= $ver_ocultos ? '📂' : '👥' ?></span>
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: var(--color-primary); filter: blur(35px); opacity: 0.15; z-index: -1;"></div>
     </div>

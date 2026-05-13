@@ -4,6 +4,22 @@
 
 /* --- AJUSTES DE PRECISIÓN PARA TARJETAS DE CLIENTES --- */
 
+.sira-icon-card {
+    width: 14px !important;
+    height: 14px !important;
+    vertical-align: middle;
+    margin-right: 8px;
+    filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.4));
+}
+
+.sira-icon-list {
+    width: 18px !important;
+    height: 18px !important;
+    vertical-align: middle;
+    margin-right: 12px;
+}
+
+
 /* --- INDICADOR DE ESTADO EN LÍNEA (LED PULSE) --- */
 .status-indicator-online {
     width: 10px;
