@@ -84,7 +84,6 @@ $base_url   = str_replace($_doc_root, '', $_front_dir);
     <title><?= htmlspecialchars($page_title) ?></title>
     <!-- Iconos y Favicon -->
     <link rel="icon" type="image/svg+xml" href="<?= $base_url ?>/assets/img/favicon.svg">
-    <link rel="icon" type="image/png" href="<?= $base_url ?>/assets/img/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Redirección Automática (0% JS) -->
     <?php if (isset($auto_redirect)): ?>
