@@ -433,7 +433,7 @@ Se ha implementado una arquitectura CSS modular y basada en **Custom Properties 
 - **`base.css`**: Reset de estilos + tipografía (Google Fonts: Inter, Roboto).
 - **`layout.css`**: Estructura de navegación y cuerpo principal.
 - **Archivos espejo**: Cada página PHP tiene su propio `nombre.css` para estilos específicos.
-- **Módulos de clima**: `rain.css`, `heat.css`, `snow.css`, `cloudy.css` — cargados dinámicamente según los datos del sensor. Los efectos usan `pointer-events: none` para no bloquear la interacción.
+- **Módulos de clima**: `ideal.css`, `rain.css`, `heat.css`, `sequia.css`, `cloudy.css` y `snow.css` — cargados dinámicamente según los datos del sensor. Los efectos usan `pointer-events: none` para no bloquear la interacción.
 
 ### 6.4 Control de Acceso en el Frontend
 
@@ -507,17 +507,32 @@ Para lograr una apariencia premium y moderna, SIRA sigue la regla del **Standard
 
 La característica más distintiva de SIRA UX es su capacidad de **reacción visual al entorno**:
 - **Glassmorphism:** Los paneles usan fondos translúcidos con `backdrop-filter: blur(10px)`. Esto permite que los efectos climáticos del fondo (lluvia, nieve) sean visibles pero no interfieran con la lectura de los datos.
-- **Filtros de Clima:** Mediante CSS dinámico, la plataforma aplica filtros de color a toda la interfaz según el estado de los sensores:
-    - *Modo Calor:* Tonalidad sepia y brillo aumentado (`sepia(0.12) brightness(1.05)`).
-    - *Modo Tormenta:* Desaturación y tono azulado (`saturate(0.70) hue-rotate(-10deg)`).
-    - *Modo Ideal:* Contraste y saturación optimizados para máxima claridad.
+- **Filtros de Clima:** Mediante CSS dinámico, la plataforma aplica filtros de color a toda la interfaz según el estado de los sensores. El sistema orquesta una jerarquía visual completa:
+    - *Modo Ideal:* Contraste y saturación optimizados para máxima claridad bajo luz solar (`saturate(1.08) hue-rotate(5deg)`).
+    - *Modo Calor:* Tonalidad sepia y brillo aumentado para simular atmósfera pesada (`sepia(0.12) brightness(1.05)`).
+    - *Modo Tormenta (Lluvioso):* Desaturación y tono azulado frío (`saturate(0.70) hue-rotate(-10deg)`).
+    - *Modo Sequía:* Desaturación extrema, tono terroso y contraste alto (`saturate(0.55) sepia(0.15)`).
+    - *Modo Nublado:* Reducción de saturación y brillo suave para días grises (`saturate(0.70) brightness(0.94)`).
+    - *Modo Nieve / Helada:* Tono gélido (cian) y desaturación para ambientes de baja temperatura.
+- **Modo Randomize:** El sistema permite la activación de un ciclo dinámico que alterna entre estos estados, demostrando la capacidad de respuesta inmediata de la interfaz ante cambios en la telemetría.
+
+<div style="page-break-after: always;"></div>
 
 ### 7.6 Dualidad de Temas (Dark & Light)
 
-SIRA implementa un sistema de temas dinámicos basado en atributos de datos (`data-theme`). Esta funcionalidad permite:
-- **Modo Oscuro (Default):** Optimizado para uso en interiores o baja luz, resaltando los verdes y azules tecnológicos sobre el Navy profundo.
-- **Modo Claro (High Visibility):** Diseñado para su uso en exteriores bajo luz solar directa. El fondo pasa a un blanco hueso (`#f8fafc`) y el texto a un azul oscuro profundo, garantizando que los datos sean legibles incluso con reflejos en la pantalla.
-- **Persistencia:** La elección del tema se vincula a la sesión del usuario, manteniendo la coherencia visual en todos los dispositivos de la explotación.
+SIRA implementa un sistema de temas dinámicos basado en atributos de datos (`data-theme`). Esta funcionalidad no es solo estética, sino una herramienta de legibilidad operativa:
+- **Modo Oscuro (Default):** Optimizado para uso en interiores o condiciones de baja luminosidad. Utiliza una base Navy profundo (`#0f172a`) que reduce la fatiga visual y resalta los datos críticos en verde esmeralda y azul tecnológico.
+- **Modo Claro (High Visibility):** Diseñado específicamente para el trabajo en campo bajo luz solar directa. El fondo cambia a un blanco hueso (`#f8fafc`) y el texto a un azul marino profundo, maximizando el contraste para combatir los reflejos en las pantallas de dispositivos móviles.
+- **Implementación Técnica (Zero-JS UI):** El cambio de tema se gestiona mediante **Variables CSS (Custom Properties)**. El servidor PHP inyecta el atributo `data-theme` en la etiqueta `<html>`, y el CSS redefine instantáneamente los tokens de color sin necesidad de recargar la página o ejecutar lógica compleja en el cliente.
+- **Persistencia:** La preferencia del usuario se almacena en la sesión del servidor, garantizando que la experiencia sea coherente al saltar entre el ordenador de la oficina y la tablet de campo.
+
+### 7.7 UX Adaptativa y Diseño Responsivo (3-Tier)
+
+Para garantizar la eficacia del sistema en el entorno agrícola, SIRA se ha diseñado bajo una arquitectura responsiva de tres niveles, verificada mediante Media Queries:
+
+1. **Nivel Desktop (1080p / >1200px):** El panel de control se despliega en su máxima extensión, permitiendo una visión panorámica de todos los invernaderos, gráficas de telemetría y logs de actuadores de forma simultánea.
+2. **Nivel Tablet (Breakpoints 1024px - 900px):** La interfaz reorganiza los componentes (Grids) para priorizar la visualización táctil. Los elementos de navegación se compactan y los radio de interacción se mantienen en el estándar de 10px para facilitar la navegación con dedos.
+3. **Nivel Mobile (Breakpoints <768px):** En smartphones, SIRA aplica una **jerarquía de información crítica**. Se ocultan elementos decorativos o secundarios (como el reloj central del header o taglines de marca) para dejar espacio libre a los valores de los sensores y botones de control de actuadores. Las tablas de datos se transforman en listas verticales legibles, asegurando que el agricultor pueda actuar sobre un riego desde cualquier punto de la finca.
 
 <div style="page-break-after: always;"></div>
 
@@ -626,12 +641,13 @@ El simulador incluye los siguientes escenarios climáticos pre-configurados, act
 
 | Preset | Condición Simulada | Respuesta Esperada del Sistema |
 |---|---|---|
-| **Condiciones Ideales** | Temp 22ºC, Hum 70%, sin viento | Actuadores en reposo |
-| **Tormenta** | Viento > 60 km/h + lluvia | Cierre inmediato de ventanas (Prioridad 1) |
-| **Ola de Calor** | Temp 42ºC, Hum 30% | Extractores ON + riego ON + alerta usuario |
-| **Helada Nocturna** | Temp 3ºC | Calefacción ON (Prioridad 2) |
-| **Día Nublado** | Radiación 50 W/m² | Luces LED ON (si es horario laboral) |
-| **Randomize** | Valores aleatorios en rangos amplios | Evaluación dinámica de la lógica de control ante ambientes impredecibles |
+| **Condiciones Ideales** | Temp 22ºC, Hum 70%, sin viento | Actuadores en reposo. VFX: Modo Ideal. |
+| **Tormenta** | Viento > 60 km/h + lluvia | Cierre inmediato de ventanas (Prioridad 1). VFX: Modo Tormenta. |
+| **Ola de Calor** | Temp 42ºC, Hum 30% | Extractores ON + riego ON + alerta usuario. VFX: Modo Calor. |
+| **Sequía Extrema** | Humedad suelo < 20%, Radiación alta | Riego intensivo + alertas de estrés hídrico. VFX: Modo Sequía. |
+| **Helada Nocturna** | Temp 3ºC | Calefacción ON (Prioridad 2). VFX: Modo Nieve/Helada. |
+| **Día Nublado** | Radiación 50 W/m² | Luces LED ON (si es horario laboral). VFX: Modo Nublado. |
+| **Randomize** | Valores aleatorios en rangos amplios | Evaluación dinámica de la lógica de control. VFX: Ciclo aleatorio de filtros climáticos. |
 
 
 <div style="page-break-after: always;"></div>

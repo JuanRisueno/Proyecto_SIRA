@@ -24,10 +24,10 @@ def crear_cliente(
 ):
     """Registra una nueva empresa/agricultor en SIRA."""
     if cliente.rol != "cliente":
-        if not current_user or current_user.rol not in ["admin", "root"]:
+        if not current_user or current_user.rol != "root":
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, 
-                detail="No tienes permisos para asignar roles especiales."
+                detail="Solo el usuario Root tiene permisos para asignar roles administrativos."
             )
         if cliente.rol == "root":
             raise HTTPException(
@@ -90,8 +90,14 @@ def cambiar_estado_cliente(
     if not db_cliente:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
     
+    if current_user.cliente_id == cliente_id:
+        raise HTTPException(status_code=403, detail="Operación denegada. No puedes desactivar tu propia cuenta.")
+    
+    if db_cliente.rol == "root" and not activa:
+        raise HTTPException(status_code=403, detail="El administrador principal (root) no puede ser desactivado para garantizar el acceso al sistema.")
+
     if current_user.rol == "admin" and db_cliente.rol != "cliente":
-        raise HTTPException(status_code=403, detail="Un administrador no puede cambiar el estado de otros administradores.")
+        raise HTTPException(status_code=403, detail="Un administrador no tiene permisos para cambiar el estado de otros perfiles administrativos.")
     
     return crud.set_cliente_status(db, cliente_id=cliente_id, activa=activa)
 
@@ -109,9 +115,14 @@ def actualizar_cliente(
 
     # --- LÓGICA DE PERMISOS JERÁRQUICOS ---
     
-    # 1. Root: Control total, sin restricciones.
+    # 1. Root: Control total, pero autoprotegido
     if current_user.rol == "root":
-        pass
+        # Impedir que el root deje de ser root o se degrade
+        if cliente_update.rol and cliente_update.rol != "root" and db_cliente_actual.rol == "root":
+            raise HTTPException(status_code=403, detail="El sistema requiere exactamente un usuario 'root'. No puedes cambiar tu propio rol.")
+        # Impedir que el root cree otro root (ya se controla en POST, pero reforzamos aquí)
+        if cliente_update.rol == "root" and db_cliente_actual.rol != "root":
+            raise HTTPException(status_code=403, detail="Ya existe un usuario 'root' en el sistema. No se permiten duplicados.")
     
     # 2. Admin: Solo puede editar a 'clientes' o a SÍ MISMO
     elif current_user.rol == "admin":
@@ -119,6 +130,12 @@ def actualizar_cliente(
              raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN, 
                 detail="Un administrador solo tiene permiso para gestionar cuentas de clientes estándar."
+            )
+        # RESTRICCIÓN DE ROL: Solo el root puede cambiar el rol de un usuario
+        if cliente_update.rol and cliente_update.rol != db_cliente_actual.rol:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, 
+                detail="Operación denegada. Solo el usuario Root tiene permisos para cambiar el tipo de usuario (rol)."
             )
     
     # 3. Cliente: Autogestión limitada (No puede cambiar su identidad legal ni su rol)
@@ -173,6 +190,13 @@ def borrar_cliente(
     current_user: models.Cliente = Depends(auth.require_admin)
 ):
     """Elimina permanentemente un cliente (Uso restringido)."""
+    if current_user.cliente_id == cliente_id:
+        raise HTTPException(status_code=403, detail="No puedes eliminar permanentemente tu propia cuenta mientras estás en sesión.")
+    
+    db_cliente = crud.get_cliente(db, cliente_id=cliente_id)
+    if db_cliente and db_cliente.rol == "root":
+        raise HTTPException(status_code=403, detail="La cuenta 'root' es vital para el sistema y no puede ser eliminada físicamente.")
+
     exito = crud.delete_cliente(db, cliente_id=cliente_id)
     if not exito:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")

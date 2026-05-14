@@ -32,7 +32,7 @@ if ($is_edit) {
 }
 
 // 2. Control de Acceso y Permisos
-$es_mi_perfil = ($is_edit && $user_rol === 'cliente' && $id_a_gestionar == ($_SESSION['cliente_id'] ?? 0));
+$es_mi_perfil = ($is_edit && $id_a_gestionar == ($_SESSION['cliente_id'] ?? 0));
 
 if ($is_edit) {
     // Permiso Edición: Admins/Root o usuario editando su propio perfil
@@ -54,7 +54,9 @@ if ($is_edit) {
 }
 
 // 3. Configuración de UI
-$solo_lectura = ($is_edit && $user_rol === 'cliente');
+$solo_lectura = ($is_edit && $user_rol !== 'root' && ($user_rol === 'cliente' || $es_mi_perfil));
+$puede_cambiar_rol = ($user_rol === 'root');
+
 $titulo_pagina = $is_edit ? ($es_mi_perfil ? "Mi Cuenta" : "Editar Usuario") : "Añadir Nuevo Usuario";
 $subtitulo_pagina = $is_edit 
     ? ($es_mi_perfil ? "Gestiona tus datos personales y de contacto." : "Modifica los datos de <strong>" . htmlspecialchars($user_data['nombre_empresa'] ?? '') . "</strong>")
@@ -208,7 +210,12 @@ $label_contacto = $es_admin_target ? "Departamento / Cargo" : "Persona de Contac
         <form method="POST" class="sira-form">
             <?php if ($solo_lectura): ?>
                 <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--color-primary); color: var(--color-text-main); padding: 1.2rem; margin-bottom: 2rem; border-radius: 10px; font-size: 0.9rem; line-height: 1.5;">
-                    💡 <strong>Nota de Seguridad:</strong> Como personal de gestión de SIRA, puedes actualizar tus datos de contacto y clave. Tu identificador y rol son gestionados por el Administrador de Sistemas.
+                    💡 <strong>Nota de Seguridad:</strong> 
+                    <?php if ($user_rol === 'admin'): ?>
+                        Como Administrador de SIRA, puedes actualizar tus datos de contacto y clave. Tu identificador y rol son gestionados por el usuario root.
+                    <?php else: ?>
+                        Como usuario registrado en SIRA, puedes actualizar tus datos de contacto y contraseña. Tu identidad legal (CIF) y rol son gestionados por el equipo de administración.
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
             
@@ -312,7 +319,7 @@ $label_contacto = $es_admin_target ? "Departamento / Cargo" : "Persona de Contac
 
             </div>
 
-            <?php if (!$solo_lectura): ?>
+            <?php if ($puede_cambiar_rol): ?>
             <div class="form-group" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
                 <label style="display: block; margin-bottom: 0.8rem; font-weight: 600; color: var(--color-secondary);">Tipo de Usuario (Rol)</label>
                 <select name="rol" style="width: 100%; padding: 1rem; background: var(--color-bg-input); border: 1px solid var(--border-input); border-radius: 10px; color: var(--color-text-main); cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2334d399%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20xmlns%3D%22http%3D//www.w3.org/2000/svg%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.2rem;">
@@ -321,7 +328,17 @@ $label_contacto = $es_admin_target ? "Departamento / Cargo" : "Persona de Contac
                 </select>
             </div>
             <?php elseif ($is_edit): ?>
+            <div class="form-group" style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.8rem; font-weight: 600; color: var(--color-secondary);">Tipo de Usuario (Rol)</label>
+                <div style="width: 100%; padding: 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: var(--color-text-main); display: flex; align-items: center; gap: 10px;">
+                    <?php 
+                        if ($user_data['rol'] === 'root') echo "⚡ Superusuario (Root)";
+                        elseif ($user_data['rol'] === 'admin') echo "🛡️ Administrador de Gestión";
+                        else echo "👨‍🌾 Agricultor / Cliente";
+                    ?>
+                </div>
                 <input type="hidden" name="rol" value="<?= htmlspecialchars($user_data['rol']) ?>">
+            </div>
             <?php endif; ?>
 
             <div class="form-footer-actions">

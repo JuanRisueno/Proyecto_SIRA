@@ -20,8 +20,11 @@ $todos_los_clientes = array_filter($todos_los_clientes, function($c) use ($ver_o
 <?php if ($vista_grid_activa): ?>
     <div class="infra-grid-container">
         <?php foreach ($todos_los_clientes as $cli): 
-            // Lógica de permisos de edición
-            $puede_editar = ($user_rol === 'root') || ($es_admin && $cli['rol'] === 'cliente') || ($cli['cliente_id'] == $_SESSION['cliente_id']);
+            $soy_yo = ($cli['cliente_id'] == $_SESSION['cliente_id']);
+            // Lógica de permisos de edición: Root edita a todos. Admin solo a clientes o a sí mismo.
+            $puede_editar = ($user_rol === 'root') || ($es_admin && $cli['rol'] === 'cliente') || $soy_yo;
+            // Lógica de borrado (archivo): Root borra a todos menos a sí mismo. Admin solo a clientes.
+            $puedo_borrar = ($user_rol === 'root' && !$soy_yo) || ($user_rol === 'admin' && $cli['rol'] === 'cliente');
         ?>
             <div class="inv-smart-card <?= !$cli['activa'] ? 'sira-item-archived' : '' ?>">
                 
@@ -99,13 +102,15 @@ $todos_los_clientes = array_filter($todos_los_clientes, function($c) use ($ver_o
                         <?php if ($puede_editar): ?>
                             <!-- Icono de Gestión de Estado (Archivar / Restaurar) -->
                             <?php if ($cli['activa']): ?>
-                                <?php if ($cli['rol'] !== 'root'): ?>
+                                <?php if ($puedo_borrar): ?>
                                     <?= sira_btn('', 'mini', 'delete', ['href' => "dashboard.php?confirmar_ocultar=1&id=".$cli['cliente_id']."#cli-card-".$cli['cliente_id'], 'style' => "color: var(--color-warning);", 'title' => "Archivar/Ocultar Agricultor"]) ?>
                                     <span style="opacity: 0.2; margin: 0 4px;">|</span>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <?= sira_btn('', 'mini', 'eye', ['href' => "dashboard.php?accion=activar&id=".$cli['cliente_id']."#cli-card-".$cli['cliente_id'], 'style' => "color: var(--color-primary);", 'title' => "Restaurar/Mostrar Agricultor"]) ?>
-                                <span style="opacity: 0.2; margin: 0 4px;">|</span>
+                                <?php if ($puedo_borrar): ?>
+                                    <?= sira_btn('', 'mini', 'eye', ['href' => "dashboard.php?accion=activar&id=".$cli['cliente_id']."#cli-card-".$cli['cliente_id'], 'style' => "color: var(--color-primary);", 'title' => "Restaurar/Mostrar Agricultor"]) ?>
+                                    <span style="opacity: 0.2; margin: 0 4px;">|</span>
+                                <?php endif; ?>
                             <?php endif; ?>
 
                             <?= sira_btn('', 'mini', 'gear', ['href' => "formularios/formulario_usuario.php?id=".$cli['cliente_id'], 'title' => "Editar perfil y datos"]) ?>
@@ -143,21 +148,21 @@ $todos_los_clientes = array_filter($todos_los_clientes, function($c) use ($ver_o
             </thead>
             <tbody>
                 <?php foreach ($todos_los_clientes as $cli): 
-                    $puede_editar = ($user_rol === 'root') || ($es_admin && $cli['rol'] === 'cliente') || ($cli['cliente_id'] == $_SESSION['cliente_id']);
+                    $soy_yo = ($cli['cliente_id'] == $_SESSION['cliente_id']);
+                    $puede_editar = ($user_rol === 'root') || ($es_admin && $cli['rol'] === 'cliente') || $soy_yo;
+                    $puedo_borrar = ($user_rol === 'root' && !$soy_yo) || ($user_rol === 'admin' && $cli['rol'] === 'cliente');
                 ?>
                     <?php 
                         $url_click = ($cli['rol'] === 'cliente') 
                             ? "dashboard.php?cliente_id=".$cli['cliente_id'] 
-                            : "formularios/view_perfil.php?id=".$cli['cliente_id'];
+                            : "formularios/formulario_usuario.php?id=".$cli['cliente_id'];
                     ?>
                     <tr class="<?= !$cli['activa'] ? 'sira-item-archived' : '' ?> sira-table-row-clickable"
                         onclick="window.location='<?= $url_click ?>'">
                         <td style="text-align: center;" onclick="event.stopPropagation()">
-                             <?php if ($puede_editar): ?>
+                             <?php if ($puedo_borrar): ?>
                                 <?php if ($cli['activa']): ?>
-                                    <?php if ($cli['rol'] !== 'root'): ?>
-                                        <?= sira_btn('', 'mini', 'delete', ['href' => "dashboard.php?confirmar_ocultar=1&id=".$cli['cliente_id'], 'style' => "color: var(--color-warning);", 'title' => "Archivar"]) ?>
-                                    <?php endif; ?>
+                                    <?= sira_btn('', 'mini', 'delete', ['href' => "dashboard.php?confirmar_ocultar=1&id=".$cli['cliente_id'], 'style' => "color: var(--color-warning);", 'title' => "Archivar"]) ?>
                                 <?php else: ?>
                                     <?= sira_btn('', 'mini', 'eye', ['href' => "dashboard.php?accion=activar&id=".$cli['cliente_id'], 'style' => "color: var(--color-primary);", 'title' => "Restaurar"]) ?>
                                 <?php endif; ?>
