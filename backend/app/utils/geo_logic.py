@@ -1,5 +1,6 @@
 import requests
 from typing import Optional, Dict, List
+from urllib.parse import quote as url_quote
 
 # --- Mapeo de Provincias de España (Integridad Gating SIRA) ---
 MAPA_PROVINCIAS = {
@@ -19,18 +20,18 @@ MAPA_PROVINCIAS = {
 def obtener_provincia_por_cp(cp: str, backup_state: Optional[str] = None) -> str:
     """
     Determina la provincia basándose en los dos primeros dígitos del CP.
-    Si no se encuentra en el mapa local, devuelve el backup o 'Desconocida'.
     """
     prefijo = cp[:2]
     return MAPA_PROVINCIAS.get(prefijo, backup_state if backup_state else "Desconocida")
 
-def consultar_zippopotam(cp: str) -> Optional[Dict]:
+def obtener_municipio_por_cp(cp: str) -> Optional[Dict]:
     """
-    Consulta la API externa de Zippopotam para obtener datos geográficos de un CP.
+    Valida un CP y obtiene su municipio/provincia de forma directa y rápida.
     """
+    # 1. Intento con Zippopotam
     try:
         url = f"http://api.zippopotam.us/es/{cp}"
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=3)
         if response.status_code == 200:
             data = response.json()
             if "places" in data and len(data["places"]) > 0:
@@ -39,45 +40,27 @@ def consultar_zippopotam(cp: str) -> Optional[Dict]:
                     "codigo_postal": cp,
                     "municipio": place["place name"],
                     "provincia": obtener_provincia_por_cp(cp, place["state"]),
-                    "origen": "externo"
+                    "origen": "zippopotam"
                 }
     except Exception:
         pass
-    return None
 
-def consultar_municipio_externo(nombre: str) -> List[Dict]:
-    """
-    Consulta la API de Nominatim (OpenStreetMap) para buscar códigos postales 
-    por nombre de municipio en España.
-    """
-    resultados = []
+    # 2. Respaldo con Nominatim (Búsqueda por CP exacto)
     try:
-        # Nominatim requiere un User-Agent descriptivo
-        headers = {'User-Agent': 'Proyecto-SIRA/1.0 (TFG-Development)'}
-        url = f"https://nominatim.openstreetmap.org/search?q={nombre}&countrycodes=es&format=json&addressdetails=1&limit=50"
-        
-        response = requests.get(url, headers=headers, timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            cps_vistos = set()
-            nombre_clean = nombre.lower()
-            
-            for place in data:
-                addr = place.get("address", {})
-                cp = addr.get("postcode")
-                municipio_real = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("municipality") or ""
-                
-                # Filtro estricto: El municipio DEBE contener la palabra buscada
-                if cp and len(cp) == 5 and cp not in cps_vistos and nombre_clean in municipio_real.lower():
-                    cps_vistos.add(cp)
-                    provincia_real = addr.get("province") or addr.get("state") or ""
-                    
-                    resultados.append({
-                        "codigo_postal": cp,
-                        "municipio": municipio_real,
-                        "provincia": obtener_provincia_por_cp(cp, provincia_real),
-                        "origen": "externo_osm"
-                    })
+        headers = {'User-Agent': 'SIRA-Validator/1.0'}
+        url_nom = f"https://nominatim.openstreetmap.org/search?postalcode={cp}&countrycodes=es&format=json&addressdetails=1&limit=1"
+        resp = requests.get(url_nom, headers=headers, timeout=3)
+        if resp.status_code == 200 and resp.json():
+            place = resp.json()[0]
+            addr = place.get("address", {})
+            m = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("municipality") or ""
+            return {
+                "codigo_postal": cp,
+                "municipio": m,
+                "provincia": obtener_provincia_por_cp(cp, addr.get("province")),
+                "origen": "nominatim"
+            }
     except Exception:
         pass
-    return resultados
+
+    return None

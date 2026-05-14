@@ -2,6 +2,16 @@
 
 **Documentación Final del Proyecto (Versión 1.0 Final)**
 
+<style>
+code {
+    color: #000000 !important;
+    background: transparent !important;
+    font-weight: bold !important;
+    font-family: inherit !important;
+    font-size: 1em !important;
+}
+</style>
+
 <br><br><br>
 
 | | |
@@ -16,12 +26,12 @@
 
 **Equipo de Desarrollo:**
 
-| Integrante | Rol Principal |
-|---|---|
-| **Juan Risueño** | Arquitectura de Sistemas, Backend (FastAPI), Seguridad (Iron Fortress), Cloud (AWS) |
-| **Jorge Pedro López** | Coordinación, Diseño E/R, Frontend (PHP), Hardware/IoT |
-| **Alfonso Navarro** | Base de Datos (SQL), Normalización, CSS, Documentación Técnica |
-
+| Integrante | Rol | Áreas de Responsabilidad |
+|---|---|---|
+| **Juan Risueño** | Backend Lead / DevOps | Arquitectura de sistemas, API FastAPI, protocolo Iron Fortress, despliegue AWS, Docker/Nginx |
+| **Jorge Pedro López** | Coordinador / Frontend | Coordinación del proyecto, base de datos (SQL), desarrollo PHP, hardware IoT, efectos visuales CSS |
+| **Alfonso Navarro** | CSS / Docs | Datos SQL y normalización, arquitectura CSS, documentación técnica del TFG |
+ 
 <br><br>
 
 ---
@@ -176,17 +186,17 @@ El esquema está normalizado hasta la **3FN (Tercera Forma Normal)**:
 
 | Entidad | Clave Primaria | Descripción |
 |---|---|---|
-| `CLIENTE` | `cliente_id` | Empresa/autónomo propietario de las fincas. Accede con su CIF. |
-| `LOCALIDAD` | `codigo_postal` | Catálogo de municipios. Normaliza la ubicación de las parcelas. |
-| `PARCELA` | `parcela_id` | Finca física identificada por referencia catastral. |
-| `INVERNADERO` | `invernadero_id` | Nave dentro de una parcela. Contiene sensores y actuadores. |
-| `CULTIVO` | `cultivo_id` | Tipo de cultivo con sus parámetros óptimos asociados. |
-| `PARAMETROS_OPTIMOS` | `parametro_id` | Rangos ideales (temp., humedad, pH) por cultivo y fase. |
-| `SENSOR` | `sensor_id` | Dispositivo de lectura (temperatura, humedad, viento, etc.). |
-| `MEDICION` | `medicion_id` | Registro histórico de una lectura de sensor con timestamp. |
-| `ACTUADOR` | `actuador_id` | Dispositivo de control (riego, ventana, calefacción, etc.). |
-| `ACCION_ACTUADOR` | `accion_id` | Log de cada acción ejecutada por un actuador. |
-| `RECOMENDACION_RIEGO` | `recomendacion_id` | Decisión de riego generada automáticamente por el backend. |
+| **CLIENTE** | **cliente_id** | Empresa/autónomo propietario de las fincas. Accede con su CIF. |
+| **LOCALIDAD** | **codigo_postal** | Catálogo de municipios. Normaliza la ubicación de las parcelas. |
+| **PARCELA** | **parcela_id** | Finca física identificada por referencia catastral. |
+| **INVERNADERO** | **invernadero_id** | Nave dentro de una parcela. Contiene sensores y actuadores. |
+| **CULTIVO** | **cultivo_id** | Tipo de cultivo con sus parámetros óptimos asociados. |
+| **PARAMETROS_OPTIMOS** | **parametro_id** | Rangos ideales (temp., humedad, pH) por cultivo y fase. |
+| **SENSOR** | **sensor_id** | Dispositivo de lectura (temperatura, humedad, viento, etc.). |
+| **MEDICION** | **medicion_id** | Registro histórico de una lectura de sensor con timestamp. |
+| **ACTUADOR** | **actuador_id** | Dispositivo de control (riego, ventana, calefacción, etc.). |
+| **ACCION_ACTUADOR** | **accion_id** | Log de cada acción ejecutada por un actuador. |
+| **RECOMENDACION_RIEGO** | **recomendacion_id** | Decisión de riego generada automáticamente por el backend. |
 
 <div style="page-break-after: always;"></div>
 
@@ -249,10 +259,10 @@ SIRA se despliega como un conjunto de microservicios orquestados mediante **Dock
 Nginx es la pieza central de la infraestructura de red. Su configuración implementa:
 
 - **Aislamiento de puertos**: Los puertos internos de FastAPI (8000), PostgreSQL (5432) y Apache (80 interno) nunca se exponen a internet.
-- **Enrutamiento inteligente**: Las peticiones a `/api/`, `/docs` y `/redoc` se redirigen al contenedor FastAPI. El resto del tráfico se sirve desde el contenedor PHP.
-- **Prevención DoS**: La directiva `client_max_body_size 50M` previene ataques de saturación por payload.
-- **Soporte WebSocket**: Habilitado mediante las cabeceras `Upgrade` para el flujo continuo de datos IoT.
-- **Abstracción de entorno**: El puerto de exposición se configura mediante variable de entorno (`SIRA_PORT`), permitiendo usar 8085 en local y 80 en AWS sin tocar el código.
+- **Enrutamiento inteligente**: Las peticiones a **/api/**, **/docs** y **/redoc** se redirigen al contenedor FastAPI. El resto del tráfico se sirve desde el contenedor PHP.
+- **Prevención DoS**: La directiva **client_max_body_size 50M** previene ataques de saturación por payload.
+- **Soporte WebSocket**: Habilitado mediante las cabeceras **Upgrade** para el flujo continuo de datos IoT.
+- **Abstracción de entorno**: El puerto de exposición se configura mediante variable de entorno (**SIRA_PORT**), permitiendo usar 8085 en local y 80 en AWS sin tocar el código.
 
 <div style="page-break-before: always;"></div>
 
@@ -262,10 +272,10 @@ Toda la configuración sensible se centraliza en un archivo `.env` excluido del 
 
 | Variable | Descripción | Valor Local | Valor AWS |
 |---|---|---|---|
-| `SIRA_PORT` | Puerto de exposición de Nginx | `8085` | `80` |
-| `DB_USER` | Usuario de PostgreSQL | `juanrisueno` | *(seguro)* |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | Duración máxima de sesión | `1440` (24h) | `1440` |
-| `DB_PASSWORD` | Contraseña de PostgreSQL | *(local)* | *(seguro)* |
+| **SIRA_PORT** | Puerto de exposición de Nginx | **8085** | **80** |
+| **DB_USER** | Usuario de PostgreSQL | *(local)* | *(seguro)* |
+| **ACCESS_TOKEN_EXPIRE_MINUTES** | Duración máxima de sesión | **1440** (24h) | **240** |
+| **DB_PASSWORD** | Contraseña de PostgreSQL | *(local)* | *(seguro)* |
 
 <div style="page-break-before: always;"></div>
 
@@ -292,7 +302,7 @@ El script no se limita a copiar archivos, sino que analiza el historial para opt
 
 Para asegurar la ejecución sin intervención humana, el script se programa en el `crontab` del sistema (Ubuntu en AWS). Se recomienda una ejecución diaria a una hora de baja carga (ej. 03:00 AM):
 
-```bash
+```text
 # Programación en crontab -e
 00 03 * * * /bin/bash /home/ubuntu/Proyecto_SIRA/scripts/backup_sira.sh >> /home/ubuntu/sira_backups/log_cron.txt 2>&1
 ```
@@ -363,12 +373,12 @@ Para asegurar la ejecución sin intervención humana, el script se programa en e
 
 | Archivo | Responsabilidad |
 |---|---|
-| `main.py` | Punto de entrada. Registra routers y configura middleware. |
-| `models.py` | Define las tablas de PostgreSQL como clases Python (SQLAlchemy). |
-| `schemas.py` | Define los modelos de validación Pydantic para entrada y salida de datos. |
-| `crud.py` | Implementa las operaciones de lectura, escritura, actualización y borrado. |
-| `routers/` | Directorio con un archivo por recurso (usuarios, parcelas, sensores, etc.). |
-| `security.py` | Lógica de generación y verificación de tokens JWT + Bcrypt. |
+| **main.py** | Punto de entrada. Registra routers y configura middleware. |
+| **models.py** | Define las tablas de PostgreSQL como clases Python (SQLAlchemy). |
+| **schemas.py** | Define los modelos de validación Pydantic para entrada y salida de datos. |
+| **crud.py** | Implementa las operaciones de lectura, escritura, actualización y borrado. |
+| **routers/** | Directorio con un archivo por recurso (usuarios, parcelas, sensores, etc.). |
+| **security.py** | Lógica de generación y verificación de tokens JWT + Bcrypt. |
 
 ### 5.4 Documentación Automática (Swagger)
 
@@ -391,39 +401,49 @@ El frontend de SIRA está construido en **PHP con renderizado en servidor (SSR)*
 La comunicación con el backend no se realiza desde el navegador, sino desde PHP en el servidor mediante la librería **cURL**. El flujo completo para servir una página de datos es:
 
 <div align="center">
-<svg width="580" height="260" xmlns="http://www.w3.org/2000/svg">
+<svg width="580" height="280" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arr_php" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#2c3e50"/>
     </marker>
   </defs>
-  <!-- Step boxes -->
-  <rect x="10" y="100" width="90" height="55" rx="6" fill="#ecf0f1" stroke="#2c3e50" stroke-width="2"/>
-  <text x="55" y="122" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#2c3e50">NAVEGADOR</text>
-  <text x="55" y="138" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#2c3e50">GET /sensores</text>
-  <text x="55" y="152" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#2c3e50">.php</text>
-  <line x1="100" y1="127" x2="130" y2="127" stroke="#2c3e50" stroke-width="2" marker-end="url(#arr_php)"/>
-  <rect x="130" y="100" width="110" height="55" rx="6" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
-  <text x="185" y="122" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#fff">NGINX</text>
-  <text x="185" y="138" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">Ruta no /api/</text>
-  <text x="185" y="152" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">→ PHP/Apache</text>
-  <line x1="240" y1="127" x2="270" y2="127" stroke="#2c3e50" stroke-width="2" marker-end="url(#arr_php)"/>
-  <rect x="270" y="100" width="110" height="55" rx="6" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
-  <text x="325" y="122" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#fff">PHP</text>
-  <text x="325" y="138" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">cURL → /api/</text>
-  <text x="325" y="152" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">sensores</text>
-  <line x1="380" y1="127" x2="410" y2="127" stroke="#2c3e50" stroke-width="2" marker-end="url(#arr_php)"/>
-  <rect x="410" y="100" width="110" height="55" rx="6" fill="#27ae60" stroke="#2c3e50" stroke-width="2"/>
-  <text x="465" y="122" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#fff">FastAPI</text>
-  <text x="465" y="138" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">Consulta SQL</text>
-  <text x="465" y="152" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">→ JSON</text>
-  <!-- Return -->
-  <line x1="465" y1="195" x2="55" y2="195" stroke="#2ecc71" stroke-width="2" marker-end="url(#arr_php)"/>
-  <text x="270" y="215" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#27ae60">PHP genera HTML con datos → Navegador recibe página completa</text>
-  <line x1="465" y1="155" x2="465" y2="195" stroke="#2ecc71" stroke-width="1.5"/>
-  <line x1="55" y1="155" x2="55" y2="195" stroke="#2ecc71" stroke-width="1.5"/>
+  <!-- Step boxes (Aumentados a h=75) -->
+  <rect x="10" y="80" width="95" height="75" rx="6" fill="#ecf0f1" stroke="#2c3e50" stroke-width="2"/>
+  <text x="58" y="105" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#2c3e50">NAVEGADOR</text>
+  <text x="58" y="125" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#2c3e50">GET /sensores</text>
+  <text x="58" y="140" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#2c3e50">.php</text>
+  
+  <line x1="105" y1="117" x2="130" y2="117" stroke="#2c3e50" stroke-width="2" marker-end="url(#arr_php)"/>
+  
+  <rect x="130" y="80" width="115" height="75" rx="6" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+  <text x="188" y="105" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#fff">NGINX</text>
+  <text x="188" y="125" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">Ruta no /api/</text>
+  <text x="188" y="140" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">→ PHP/Apache</text>
+  
+  <line x1="245" y1="117" x2="270" y2="117" stroke="#2c3e50" stroke-width="2" marker-end="url(#arr_php)"/>
+  
+  <rect x="270" y="80" width="115" height="75" rx="6" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/>
+  <text x="328" y="105" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#fff">PHP</text>
+  <text x="328" y="125" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">cURL → /api/</text>
+  <text x="328" y="140" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">sensores</text>
+  
+  <line x1="385" y1="117" x2="410" y2="117" stroke="#2c3e50" stroke-width="2" marker-end="url(#arr_php)"/>
+  
+  <rect x="410" y="80" width="115" height="75" rx="6" fill="#27ae60" stroke="#2c3e50" stroke-width="2"/>
+  <text x="468" y="105" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#fff">FastAPI</text>
+  <text x="468" y="125" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">Consulta SQL</text>
+  <text x="468" y="140" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">→ JSON</text>
+  
+  <!-- Return (Bajado para dar aire) -->
+  <line x1="468" y1="215" x2="58" y2="215" stroke="#2ecc71" stroke-width="2" marker-end="url(#arr_php)"/>
+  <text x="270" y="240" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle" fill="#27ae60">PHP genera HTML con datos → Navegador recibe página completa</text>
+  <line x1="468" y1="155" x2="468" y2="215" stroke="#2ecc71" stroke-width="1.5"/>
+  <line x1="58" y1="155" x2="58" y2="215" stroke="#2ecc71" stroke-width="1.5"/>
 </svg>
 </div>
+<br><br>
+
+<div style="page-break-after: always;"></div>
 
 ### 6.3 Sistema de Diseño Visual (CSS)
 
@@ -481,13 +501,13 @@ La coherencia cromática es el pilar de la interfaz. Se definen cuatro niveles d
 
 | Categoría | HEX (Dark) | HEX (Light) | Uso Principal |
 |---|---|---|---|
-| **Base (Fondo)** | `#0f172a` | `#f8fafc` | Fondo principal y estructura. |
-| **Superficie** | `rgba(30,41,59,0.7)` | `#ffffff` | Tarjetas, paneles y contenedores. |
-| **Texto Main** | `#f8fafc` | `#0f172a` | Lectura de datos y navegación. |
-| **Primario** | `#10b981` | `#10b981` | Botones de acción y branding. |
-| **Acento Temp.** | `#ffab00` | `#d97706` | Datos de temperatura y alertas de calor. |
-| **Acento Hum.** | `#00d1ff` | `#0099cc` | Datos de humedad y riego. |
-| **Error** | `#ef4444` | `#b91c1c` | Alertas críticas y fallos. |
+| **Base (Fondo)** | **#0f172a** | **#f8fafc** | Fondo principal y estructura. |
+| **Superficie** | **rgba(30,41,59,0.7)** | **#ffffff** | Tarjetas, paneles y contenedores. |
+| **Texto Main** | **#f8fafc** | **#0f172a** | Lectura de datos y navegación. |
+| **Primario** | **#10b981** | **#10b981** | Botones de acción y branding. |
+| **Acento Temp.** | **#ffab00** | **#d97706** | Datos de temperatura y alertas de calor. |
+| **Acento Hum.** | **#00d1ff** | **#0099cc** | Datos de humedad y riego. |
+| **Error** | **#ef4444** | **#b91c1c** | Alertas críticas y fallos. |
 
 <div style="page-break-after: always;"></div>
 
@@ -649,7 +669,6 @@ El simulador incluye los siguientes escenarios climáticos pre-configurados, act
 | **Día Nublado** | Radiación 50 W/m² | Luces LED ON (si es horario laboral). VFX: Modo Nublado. |
 | **Randomize** | Valores aleatorios en rangos amplios | Evaluación dinámica de la lógica de control. VFX: Ciclo aleatorio de filtros climáticos. |
 
-
 <div style="page-break-after: always;"></div>
 
 ## 9. Protocolo de Seguridad "Iron Fortress"
@@ -714,20 +733,20 @@ La seguridad es un eje transversal en todo SIRA, implementada bajo el nombre en 
 | **Sliding Window (30 min)** | Si no hay actividad en 30 minutos, la sesión se cierra automáticamente. |
 | **Historial de contraseñas** | Se guardan las últimas 5 contraseñas (en JSON fuera de la BD) para evitar su reutilización. |
 | **Caducidad de credenciales** | Las contraseñas caducan a los 90 días. |
-| **XSS Prevention** | PHP usa `htmlspecialchars()` en todos los datos mostrados al usuario. |
+| **XSS Prevention** | PHP usa htmlspecialchars() en todos los datos mostrados al usuario. |
 | **SQL Injection Prevention** | SQLAlchemy parametriza todas las consultas. No existe SQL concatenado en cadenas. |
 | **Almacenamiento seguro del JWT** | El token se guarda en la sesión PHP del servidor, no en localStorage del navegador. |
-| **Secretos fuera del repositorio** | El archivo `.env` está en `.gitignore`. Nunca se sube a GitHub. |
+| **Secretos fuera del repositorio** | El archivo .env está en .gitignore. Nunca se sube a GitHub. |
 
 ### 9.2 Matriz de Riesgos
 
 | Riesgo | Impacto | Probabilidad | Medida |
 |---|---|---|---|
 | Inyección SQL | Crítico | Baja | ORM SQLAlchemy parametrizado |
-| Robo de sesión (XSS) | Alto | Baja | JWT en sesión PHP + `htmlspecialchars()` |
+| Robo de sesión (XSS) | Alto | Baja | JWT en sesión PHP + htmlspecialchars() |
 | Fuerza bruta | Alto | Media | Bcrypt 12 rondas + contraseñas complejas |
 | Acceso no autorizado | Crítico | Baja | Validación de rol en cada endpoint |
-| Fuga de secretos | Crítico | Baja | `.gitignore` + variables de entorno |
+| Fuga de secretos | Crítico | Baja | .gitignore + variables de entorno |
 | Sesión olvidada abierta | Medio | Alta | Sliding Window 30 min |
 
 <div style="page-break-after: always;"></div>
@@ -797,7 +816,7 @@ El sistema SIRA ha sido desplegado con éxito en **Amazon Web Services (AWS)** p
 
 ### 10.3 Proceso de Despliegue
 
-```bash
+```text
 # 1. Configurar swap (instancia t3.small con 2 GB RAM)
 sudo fallocate -l 2G /swapfile && sudo chmod 600 /swapfile
 sudo mkswap /swapfile && sudo swapon /swapfile
@@ -821,8 +840,8 @@ docker-compose up -d --build
 
 | # | Riesgo | Categoría | Impacto | Medida Implementada |
 |---|---|---|---|---|
-| 1 | Fallo del servidor durante la demo | Infraestructura | Alto | Script de arranque automático (`docker-compose up -d`) |
-| 2 | Desajuste de zona horaria en gráficas | Base de Datos | Medio | `TZ=Europe/Madrid` en todos los contenedores Docker |
+| 1 | Fallo del servidor durante la demo | Infraestructura | Alto | Script de arranque automático (docker-compose up -d) |
+| 2 | Desajuste de zona horaria en gráficas | Base de Datos | Medio | TZ=Europe/Madrid en todos los contenedores Docker |
 | 3 | Saturación del servidor por simulador | Rendimiento | Medio | Intervalo mínimo de 5-10 segundos entre inserciones |
 | 4 | Pérdida de datos del formulario por meta-refresh | UX | Bajo | Auto-refresh solo activo en páginas de monitorización |
 | 5 | Introducción de valores imposibles por el usuario | Validación | Medio | Validación doble: Pydantic (backend) + PHP (frontend) |
@@ -839,19 +858,19 @@ El proyecto se ha desarrollado en **6 fases** a lo largo del curso 2025-2026:
 
 | Fase | Nombre | Estado | Responsables Principales |
 |---|---|---|---|
-| **I** | Infraestructura y Base de Datos | ✅ COMPLETADA | Juan, Jorge, Alfonso |
-| **II** | Desarrollo del Backend (FastAPI) | ✅ COMPLETADA | Juan |
-| **III** | Interfaz Web y Autenticación | ✅ COMPLETADA | Jorge, Juan, Alfonso |
-| **IV** | Simulación de Sensores y Cultivos | ✅ COMPLETADA | Juan, Jorge, Alfonso |
-| **V** | Seguridad Avanzada (Iron Fortress) | ✅ COMPLETADA | Juan, Jorge |
-| **VI** | Despliegue en AWS y Cierre | ✅ COMPLETADA | Juan, Jorge |
+| **I** | Infraestructura y Base de Datos | **✔ COMPLETADA** | Juan, Jorge, Alfonso |
+| **II** | Desarrollo del Backend (FastAPI) | **✔ COMPLETADA** | Juan |
+| **III** | Interfaz Web y Autenticación | **✔ COMPLETADA** | Jorge, Juan, Alfonso |
+| **IV** | Simulación de Sensores y Cultivos | **✔ COMPLETADA** | Juan, Jorge, Alfonso |
+| **V** | Seguridad Avanzada (Iron Fortress) | **✔ COMPLETADA** | Juan, Jorge |
+| **VI** | Despliegue en AWS y Cierre | **✔ COMPLETADA** | Juan, Jorge |
 
 **Hitos Superados:**
-- ✅ Punto de Control 1: Servidor y BD funcionando correctamente.
-- ✅ Punto de Control 2: Interfaz web funcional y conexión segura con la API.
-- ✅ Punto de Control 3: Sistema de control y simulación validado.
-- ✅ Punto de Control 4: Sistema protegido y listo para la defensa.
-- ✅ Punto de Control 5: Proyecto desplegado y funcionando en la nube.
+- **✔** Punto de Control 1: Servidor y BD funcionando correctamente.
+- **✔** Punto de Control 2: Interfaz web funcional y conexión segura con la API.
+- **✔** Punto de Control 3: Sistema de control y simulación validado.
+- **✔** Punto de Control 4: Sistema protegido y listo para la defensa.
+- **✔** Punto de Control 5: Proyecto desplegado y funcionando en la nube.
 
 <div style="page-break-after: always;"></div>
 
@@ -863,13 +882,13 @@ Tras la revisión final de todos los componentes del sistema:
 
 | Área | Estado | Observaciones |
 |---|---|---|
-| **Documentación** | ✅ Completa | Guías de infraestructura, seguridad, BD y defensa redactadas. |
-| **Backend (FastAPI)** | ✅ Estable | Organización modular, simulación IoT validada, JWT operativo. |
-| **Frontend (PHP/CSS)** | ✅ Funcional | Glassmorphism, diseño oscuro, SSR sin dependencias JS externas. |
-| **Base de Datos (PostgreSQL)** | ✅ Normalizada | Esquema 3FN, borrado lógico, backups configurados. |
-| **Infraestructura (Docker/Nginx)** | ✅ Productiva | Despliegue local y AWS verificado. |
-| **Seguridad (Iron Fortress)** | ✅ Auditada | Bcrypt, JWT, SID, Sliding Window, historial de contraseñas. |
-| **Despliegue AWS** | ✅ Operativo | EC2 t3.small con Swap, Security Groups configurados. |
+| **Documentación** | **✔** Completa | Guías de infraestructura, seguridad, BD y defensa redactadas. |
+| **Backend (FastAPI)** | **✔** Estable | Organización modular, simulación IoT validada, JWT operativo. |
+| **Frontend (PHP/CSS)** | **✔** Funcional | Glassmorphism, diseño oscuro, SSR sin dependencias JS externas. |
+| **Base de Datos (PostgreSQL)** | **✔** Normalizada | Esquema 3FN, borrado lógico, backups configurados. |
+| **Infraestructura (Docker/Nginx)** | **✔** Productiva | Despliegue local y AWS verificado. |
+| **Seguridad (Iron Fortress)** | **✔** Auditada | Bcrypt, JWT, SID, Sliding Window, historial de contraseñas. |
+| **Despliegue AWS** | **✔** Operativo | EC2 t3.small con Swap, Security Groups configurados. |
 
 ### 13.2 Conclusión
 
@@ -892,9 +911,8 @@ El desarrollo integral de SIRA ha sido liderado por el siguiente equipo técnico
 | Integrante | Rol | Áreas de Responsabilidad |
 |---|---|---|
 | **Juan Risueño** | Backend Lead / DevOps | Arquitectura de sistemas, API FastAPI, protocolo Iron Fortress, despliegue AWS, Docker/Nginx |
-| **Jorge Pedro López** | Coordinador / Frontend | Coordinación del proyecto, diseño E/R, desarrollo PHP, hardware IoT, efectos visuales CSS |
-| **Alfonso Navarro** | BD / CSS / Docs | Esquema SQL y normalización, scripts de datos, arquitectura CSS, documentación técnica del TFG |
-
+| **Jorge Pedro López** | Coordinador / Frontend | Coordinación del proyecto, base de datos (SQL), desarrollo PHP, hardware IoT, efectos visuales CSS |
+| **Alfonso Navarro** | CSS / Docs | Datos SQL y normalización, arquitectura CSS, documentación técnica del TFG |
 ---
 
 *El proyecto SIRA es el resultado de más de 6 meses de trabajo colaborativo y aprendizaje. Cada decisión técnica documentada en este dossier ha sido tomada conscientemente, con base en los principios aprendidos durante el ciclo formativo de ASIR.*

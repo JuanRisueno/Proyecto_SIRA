@@ -194,7 +194,19 @@ require_once '../includes/header.php';
                         <?php if ($is_edit || isset($_GET['parcela_id'])): ?>
                             <?php 
                                 $p_id = $is_edit ? $inv_data['parcela_id'] : (int)$_GET['parcela_id'];
-                                $p_nombre = $is_edit ? ($inv_data['parcela']['nombre'] ?: "Finca #$p_id") : "Finca #$p_id";
+                                $p_nombre = "Finca #$p_id"; // Fallback
+                                
+                                // Si es edición, ya tenemos el nombre en el objeto inv_data
+                                if ($is_edit && !empty($inv_data['parcela']['nombre'])) {
+                                    $p_nombre = $inv_data['parcela']['nombre'];
+                                } else {
+                                    // Si es alta nueva, consultamos el nombre real a través de la API
+                                    require_once '../dashboard/api/api_produccion.php';
+                                    $p_detalle = obtenerDetalleAsset($token, true, $p_id);
+                                    if ($p_detalle && !empty($p_detalle['nombre'])) {
+                                        $p_nombre = $p_detalle['nombre'];
+                                    }
+                                }
                             ?>
                             <input type="text" value="<?= htmlspecialchars($p_nombre) ?>" readonly class="input-readonly">
                             <input type="hidden" name="parcela_id" value="<?= $p_id ?>">

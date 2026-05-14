@@ -63,6 +63,7 @@ class ClienteUpdate(BaseModel):
     persona_contacto: Optional[str] = None
     cif: Optional[str] = Field(None, min_length=9, max_length=9)
     password: Optional[str] = None # Para cambios de contraseña específicos
+    rol: Optional[str] = None # Para que el root/admin pueda gestionar roles
     confirmar_cambio_cif: bool = False
 
 # =============================================================================
