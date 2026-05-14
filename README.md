@@ -160,9 +160,9 @@ erDiagram
 
 ## 📬 Autores y Equipo
 
-- **Juan Risueño** - *Arquitectura de Sistemas y Backend*
-- **Jorge Pedro López** - *Coordinación y Diseño de Frontend*
-- **Alfonso Navarro** - *Modelado de Datos y Documentación*
+- **Juan Risueño** - *Backend Lead / DevOps (FastAPI, Protocolo Iron Fortress, AWS, Docker/Nginx)*
+- **Jorge Pedro López** - *Coordinador / Frontend (Arquitectura PHP, SQL, Simulación IoT, UI)*
+- **Alfonso Navarro** - *Modelado de Datos y Documentación Técnica del TFG (Arquitectura CSS)*
 
 ---
 
