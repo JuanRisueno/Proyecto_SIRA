@@ -30,12 +30,16 @@ if ($is_edit) {
         // Permiso: Dueño o Admin
         $es_dueno = ($cult_data['cliente_id'] == $cliente_id_session);
         $es_admin = in_array($user_rol, ['admin', 'root']);
-        if (!$es_dueno && !$es_admin) {
-            header("Location: ../dashboard.php?seccion=cultivos&error=sin_permiso");
-            exit();
-        }
+        $can_edit = $es_admin || $es_dueno;
     } else {
         header("Location: ../dashboard.php?seccion=cultivos&error=no_existe");
+        exit();
+    }
+} else {
+    // Es creación: Admin o Root pueden crear, clientes no (a menos que se quiera permitir)
+    $can_edit = in_array($user_rol, ['admin', 'root']);
+    if (!$can_edit) {
+        header("Location: ../dashboard.php?seccion=cultivos&error=sin_permiso");
         exit();
     }
 }
@@ -48,7 +52,7 @@ $p = ($is_edit && isset($cult_data['parametros'])) ? $cult_data['parametros'] : 
 ];
 
 // 2. Lógica de Retorno Dinámica (Backflow) - Necesaria antes del POST
-$cliente_id_seleccionado = isset($_GET['cliente_id']) ? (int)$_GET['cliente_id'] : $cliente_id_session;
+$cliente_id_seleccionado = isset($_GET['cliente_id']) ? (int)$_GET['cliente_id'] : (($user_rol === 'cliente') ? $cliente_id_session : null);
 $from = $_GET['from'] ?? '';
 if (!empty($from)) {
     $url_retorno = "../dashboard.php?seccion=" . urlencode($from) . ($cliente_id_seleccionado ? "&cliente_id=$cliente_id_seleccionado" : "");
@@ -57,7 +61,7 @@ if (!empty($from)) {
 }
 
 // 3. Procesar POST
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && $can_edit) {
     $nombre = trim($_POST['nombre_cultivo'] ?? '');
     
     if (empty($nombre)) {
@@ -114,9 +118,24 @@ require_once '../includes/header.php';
     <div class="user-form-container card">
         
         <div style="margin-bottom: 2rem;">
-            <h1 class="dashboard-title"><?= $is_edit ? "✏️ Editar Cultivo" : "🌱 Nuevo Cultivo" ?></h1>
-            <p class="dashboard-subtitle"><?= $is_edit ? "Modificando ficha técnica de <strong>".htmlspecialchars($cult_data['nombre_cultivo'])."</strong>" : "Define el nombre y los parámetros óptimos de salud." ?></p>
+            <h1 class="dashboard-title"><?= $is_edit ? ($can_edit ? "✏️ Editar Cultivo" : "📖 Guía Técnica") : "🌱 Nuevo Cultivo" ?></h1>
+            <p class="dashboard-subtitle">
+                <?php if ($is_edit): ?>
+                    <?= $can_edit ? "Modificando ficha técnica de " : "Consultando parámetros óptimos de " ?> <strong><?= htmlspecialchars($cult_data['nombre_cultivo']) ?></strong>
+                <?php else: ?>
+                    Define el nombre y los parámetros óptimos de salud.
+                <?php endif; ?>
+            </p>
         </div>
+
+        <?php if ($is_edit && !$can_edit): ?>
+            <div style="background: rgba(52, 211, 153, 0.05); border-left: 4px solid var(--color-primary); color: var(--color-text-main); padding: 1.25rem; margin-bottom: 2rem; border-radius: 8px; font-size: 0.9rem;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.5rem;">ℹ️</span>
+                    <span><strong>Modo Consulta:</strong> Estás visualizando un cultivo del catálogo global. Los parámetros son solo de lectura.</span>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <?php if ($error_msg): ?>
             <div style="background: rgba(231, 76, 60, 0.1); border-left: 4px solid var(--color-error); color: var(--color-error); padding: 1rem; margin-bottom: 1.5rem;">
@@ -139,7 +158,7 @@ require_once '../includes/header.php';
                 <div class="form-col-2">
                     <div class="input-group-premium">
                         <label>Nombre del Cultivo (*)</label>
-                        <input type="text" name="nombre_cultivo" placeholder="Ej. Tomate Cherry" required value="<?= $is_edit ? htmlspecialchars($cult_data['nombre_cultivo']) : '' ?>">
+                        <input type="text" name="nombre_cultivo" placeholder="Ej. Tomate Cherry" required value="<?= $is_edit ? htmlspecialchars($cult_data['nombre_cultivo']) : '' ?>" <?= !$can_edit ? 'disabled' : '' ?>>
                     </div>
                 </div>
 
@@ -154,33 +173,35 @@ require_once '../includes/header.php';
 
                 <div class="input-group-premium">
                     <label>🌡️ Temp. Mín (ºC)</label>
-                    <input type="number" step="0.1" name="temp_min" value="<?= $p['temp_optima_min'] ?>" required>
+                    <input type="number" step="0.1" name="temp_min" value="<?= $p['temp_optima_min'] ?>" required <?= !$can_edit ? 'disabled' : '' ?>>
                 </div>
                 <div class="input-group-premium">
                     <label>🔥 Temp. Máx (ºC)</label>
-                    <input type="number" step="0.1" name="temp_max" value="<?= $p['temp_optima_max'] ?>" required>
+                    <input type="number" step="0.1" name="temp_max" value="<?= $p['temp_optima_max'] ?>" required <?= !$can_edit ? 'disabled' : '' ?>>
                 </div>
                 <div class="input-group-premium">
                     <label>💧 Humedad Mín (%)</label>
-                    <input type="number" step="0.1" name="hum_min" value="<?= $p['humedad_optima_min'] ?>" required>
+                    <input type="number" step="0.1" name="hum_min" value="<?= $p['humedad_optima_min'] ?>" required <?= !$can_edit ? 'disabled' : '' ?>>
                 </div>
                 <div class="input-group-premium">
                     <label>💧 Humedad Máx (%)</label>
-                    <input type="number" step="0.1" name="hum_max" value="<?= $p['humedad_optima_max'] ?>" required>
+                    <input type="number" step="0.1" name="hum_max" value="<?= $p['humedad_optima_max'] ?>" required <?= !$can_edit ? 'disabled' : '' ?>>
                 </div>
                 <div class="input-group-premium">
                     <label>🚿 Riego Diario (L/m²)</label>
-                    <input type="number" step="0.01" name="riego" value="<?= $p['necesidad_hidrica'] ?>" required>
+                    <input type="number" step="0.01" name="riego" value="<?= $p['necesidad_hidrica'] ?>" required <?= !$can_edit ? 'disabled' : '' ?>>
                 </div>
                 <div class="input-group-premium">
                     <label>🧪 pH Suelo Ideal</label>
-                    <input type="number" step="0.1" name="ph" value="<?= $p['ph_ideal'] ?>">
+                    <input type="number" step="0.1" name="ph" value="<?= $p['ph_ideal'] ?>" <?= !$can_edit ? 'disabled' : '' ?>>
                 </div>
             </div>
 
             <div class="form-footer-actions">
-                <?= sira_btn($is_edit ? 'Guardar Cambios' : 'Registrar Cultivo Completo', 'primary', 'save', ['type' => 'submit']) ?>
-                <?= sira_btn('Cancelar', 'secondary', 'cancel', ['href' => $url_retorno]) ?>
+                <?php if ($can_edit): ?>
+                    <?= sira_btn($is_edit ? 'Guardar Cambios' : 'Registrar Cultivo Completo', 'primary', 'save', ['type' => 'submit']) ?>
+                <?php endif; ?>
+                <?= sira_btn($can_edit ? 'Cancelar' : 'Volver al Catálogo', 'secondary', $can_edit ? 'cancel' : 'eye', ['href' => $url_retorno]) ?>
             </div>
         </form>
     </div>

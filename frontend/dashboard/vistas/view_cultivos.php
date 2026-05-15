@@ -56,7 +56,8 @@ if (!empty($todos_los_cultivos)) {
                     $is_target = (isset($_GET['highlight_id']) && $_GET['highlight_id'] == $cult['cultivo_id']);
                 ?>
                     <tr id="cultivo-card-<?= $cult['cultivo_id'] ?>" 
-                        class="<?= $is_target ? 'highlight-glow' : '' ?> <?= empty($cult['activa']) ? 'row-inactive' : '' ?>">
+                        class="<?= $is_target ? 'highlight-glow' : '' ?> <?= empty($cult['activa']) ? 'row-inactive' : '' ?> sira-table-row-clickable"
+                        onclick="window.location='formularios/formulario_cultivo.php?id=<?= $cult['cultivo_id'] ?>'">
                         <td>
                             <div class="list-cell-main">
                                 <span class="list-main-icon"><?= get_crop_icon($cult['nombre_cultivo']) ?></span>
@@ -97,10 +98,12 @@ if (!empty($todos_los_cultivos)) {
                         <td style="text-align: center;">
                             <span class="list-status-dot <?= !empty($cult['activa']) ? 'status-online' : 'status-offline' ?>"></span>
                         </td>
-                        <td style="text-align: right;">
+                        <td style="text-align: right;" onclick="event.stopPropagation()">
                             <div style="display: flex; gap: 8px; justify-content: flex-end;">
                                 <?php if ($puede_editar): ?>
                                     <?= sira_btn('', 'mini', 'edit', ['href' => "formularios/formulario_cultivo.php?id=".$cult['cultivo_id'], 'title' => "Editar cultivo"]) ?>
+                                <?php else: ?>
+                                    <?= sira_btn('', 'mini', 'eye', ['href' => "formularios/formulario_cultivo.php?id=".$cult['cultivo_id'], 'title' => "Ver guía técnica"]) ?>
                                 <?php endif; ?>
                                 <?php if ($es_admin_eff): ?>
                                     <?= sira_btn('', 'mini', !empty($cult['activa']) ? 'delete' : 'eye', [
@@ -190,14 +193,14 @@ if (!empty($todos_los_cultivos)) {
                     </div>
 
                     <!-- NIVEL 3: ACCIONES ESTÁNDAR -->
-                    <?php if ($puede_editar): ?>
-                        <a href="formularios/formulario_cultivo.php?id=<?= $cult['cultivo_id'] ?>" class="stretched-link" style="position: absolute;"></a>
-                    <?php endif; ?>
+                    <a href="formularios/formulario_cultivo.php?id=<?= $cult['cultivo_id'] ?>" class="stretched-link"></a>
 
                     <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10;">
                         <div style="display: flex; gap: 8px; align-items: center; min-height: 32px;">
                             <?php if ($puede_editar): ?>
                                 <?= sira_btn('', 'mini', 'gear', ['href' => "formularios/formulario_cultivo.php?id=".$cult['cultivo_id'], 'title' => "Editar parámetros"]) ?>
+                            <?php else: ?>
+                                <?= sira_btn('', 'mini', 'eye', ['href' => "formularios/formulario_cultivo.php?id=".$cult['cultivo_id'], 'title' => "Ver guía técnica"]) ?>
                             <?php endif; ?>
                             
                             <?php if ($es_admin_eff): ?>

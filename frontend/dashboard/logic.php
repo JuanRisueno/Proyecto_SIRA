@@ -159,7 +159,16 @@ if (isset($_GET['seccion'])) {
     switch ($_GET['seccion']) {
         case 'cultivos':
             $vista_actual = 'gestion_cultivos';
-            $todos_los_cultivos = listarTodosLosCultivos($token, $busqueda, $es_admin);
+            $cult_raw = listarTodosLosCultivos($token, $busqueda, $es_admin);
+            
+            // [V15.0] FILTRADO DE VISIBILIDAD (Solicitado por User)
+            $ver_ocultos = $_SESSION['ver_ocultos'] ?? false;
+            $todos_los_cultivos = array_filter($cult_raw, function($c) use ($es_admin, $ver_ocultos) {
+                $is_active = (bool)($c['activa'] ?? true);
+                if ($es_admin && $ver_ocultos) return !$is_active; // Modo papelera: solo los ocultos
+                return $is_active; // Modo normal: solo los activos
+            });
+
             $titulo_seccion = 'Catálogo de Cultivos';
             break;
         case 'mis_parcelas':
