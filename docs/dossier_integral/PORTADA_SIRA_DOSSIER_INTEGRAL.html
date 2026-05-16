@@ -65,10 +65,10 @@
         width: calc(210mm - 50mm);
     }
     .logo-container {
-        margin-bottom: 50px;
+        margin-bottom: 60px; 
     }
     .logo-img {
-        max-width: 420px;
+        width: 350px;
         height: auto;
     }
     
@@ -144,6 +144,28 @@
         font-weight: 700;
         color: #0f172a;
     }
+
+    /* Estilos para el Código QR */
+    .qr-container {
+        position: absolute;
+        top: 100mm;
+        right: 25mm;
+        text-align: center;
+        width: 30mm;
+        padding: 0;
+    }
+    .qr-container img {
+        width: 100%;
+        height: auto;
+    }
+    .qr-label {
+        font-size: 7pt;
+        font-weight: 900;
+        color: #10b981;
+        margin-top: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+    }
 </style>
 </head>
 <body>
@@ -165,6 +187,11 @@
             <div class="subtitle">Dossier Técnico Maestro</div>
             <div class="version">Documentación Final del Proyecto &middot; Versión 1.0 Final</div>
         </div>
+    </div>
+
+    <div class="qr-container">
+        <img src="QR.svg" alt="QR SIRA LIVE">
+        <div class="qr-label">Acceso en Vivo</div>
     </div>
     
     <div class="footer-section">

@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="data:image/png;base64,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" width="350" alt="SIRA Logo" />
+</div>
+
+
 # Proyecto SIRA: Sistema Integral de Riego Automático
 
 **Documentación Final del Proyecto (Versión 1.0 Final)**
@@ -13,6 +18,12 @@ code {
 </style>
 
 <br><br><br>
+
+<div style="float: right; text-align: center; margin-left: 40px; margin-bottom: 20px; margin-top: 10px;">
+  <img src="QR.svg" width="140" height="140" alt="QR SIRA Live">
+  <br>
+  <small><b>SIRA LIVE</b> (AWS)</small>
+</div>
 
 | | |
 |---|---|
@@ -35,7 +46,6 @@ code {
 <br><br>
 
 ---
-
 <div style="page-break-after: always;"></div>
 
 ## Índice de Contenidos
@@ -131,7 +141,7 @@ El esquema está normalizado hasta la **3FN (Tercera Forma Normal)**:
     </marker>
   </defs>
   <!-- CLIENTE -->
-  <rect x="10" y="170" width="110" height="50" rx="6" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+  <rect x="10" y="170" width="140" height="50" rx="6" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
   <text x="65" y="191" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle" fill="#fff">CLIENTE</text>
   <text x="65" y="208" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#fff">CIF (PK), nombre</text>
   <!-- PARCELA -->
@@ -685,7 +695,7 @@ La seguridad es un eje transversal en todo SIRA, implementada bajo el nombre en 
   <!-- Phase 1 box -->
   <rect x="20" y="10" width="560" height="145" rx="10" fill="#f8f9fa" stroke="#c0392b" stroke-width="2" stroke-dasharray="6,3"/>
   <text x="40" y="35" font-family="sans-serif" font-weight="bold" font-size="14" fill="#c0392b">FASE 1: AUTENTICACIÓN (LOGIN)</text>
-  <rect x="40" y="55" width="130" height="65" rx="6" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
+  <rect x="40" y="55" width="140" height="65" rx="6" fill="#3498db" stroke="#2c3e50" stroke-width="2"/>
   <text x="105" y="80" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle" fill="#fff">Credenciales</text>
   <text x="105" y="97" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#fff">CIF + Contraseña</text>
   <text x="105" y="112" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#cce5ff">POST /api/token</text>
@@ -702,7 +712,7 @@ La seguridad es un eje transversal en todo SIRA, implementada bajo el nombre en 
   <!-- Phase 2 box -->
   <rect x="20" y="195" width="560" height="145" rx="10" fill="#f8f9fa" stroke="#8e44ad" stroke-width="2" stroke-dasharray="6,3"/>
   <text x="40" y="220" font-family="sans-serif" font-weight="bold" font-size="14" fill="#8e44ad">FASE 2: VALIDACIÓN DE PETICIONES</text>
-  <rect x="40" y="238" width="130" height="65" rx="6" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/>
+  <rect x="40" y="238" width="140" height="65" rx="6" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/>
   <text x="105" y="263" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle" fill="#fff">Petición</text>
   <text x="105" y="280" font-family="sans-serif" font-size="11" text-anchor="middle" fill="#fff">Header Bearer</text>
   <text x="105" y="296" font-family="sans-serif" font-size="10" text-anchor="middle" fill="#e0c0ff">JWT Token</text>
