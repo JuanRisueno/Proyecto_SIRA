@@ -71,8 +71,10 @@ def login_for_access_token(
     # 2. CONTROL DE CONCURRENCIA (Iron Fortress)
     # Generamos un identificador de sesión único para invalidar sesiones previas
     import uuid
+    from sqlalchemy.sql import func
     new_sid = str(uuid.uuid4())
     user.session_id = new_sid
+    user.ultima_actividad = func.now()
     db.commit()
 
     # Generar el Token JWT con el payload necesario para el Frontend e incluyeno el SID
