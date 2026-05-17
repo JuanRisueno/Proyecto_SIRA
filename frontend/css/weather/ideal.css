@@ -242,7 +242,7 @@
     position: absolute;
     bottom: -15px;
     width: 60px;
-    height: calc(var(--h, 180px) + 60px);
+    height: calc(var(--h, 180px) + 120px);
     transform-origin: bottom center;
     /* Perf: will-change en flores */
     will-change: transform;

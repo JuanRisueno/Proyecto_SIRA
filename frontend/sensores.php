@@ -10,7 +10,7 @@ require_once 'includes/config.php';
 // PARÁMETROS BASE
 $id_inv     = $_GET['id'] ?? 1;
 $nombre_inv = $_GET['nombre'] ?? 'Invernadero';
-$token      = $_SESSION['jwt_token'];
+$token      = $_SESSION['jwt_token'] ?? null;
 
 // 1. CARGA DE LÓGICA Y DATOS (Ecosistema IoT)
 require_once 'dashboard/api/api_infraestructura.php';

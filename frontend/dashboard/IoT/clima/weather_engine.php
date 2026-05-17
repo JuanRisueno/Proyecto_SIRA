@@ -71,24 +71,24 @@ if (stripos($escenario_id, 'helada') !== false || stripos($escenario_id, 'nieve'
                     ?>
                         <div class="blade" style="left: <?= $i * 1.54 ?>%; height: <?= $h ?>px; animation-duration: <?= $dur ?>s; animation-delay: <?= $del ?>s;"></div>
                     <?php endfor; ?>
-                    <!-- Margaritas procedimentales con alturas variadas -->
-                    <?php for($j=0; $j<6; $j++): 
-                        $h = rand(140, 220); // Altura del tallo
-                    ?>
-                        <div class="fx-ideal-flower daisy" style="left: <?= 15 + ($j * 15) ?>%; --h: <?= $h ?>px;">
-                            <div class="stem-container">
-                                <div class="stem-path"></div>
-                            </div>
-                            <div class="flower-head">
-                                <div class="petal"></div><div class="petal"></div>
-                                <div class="petal"></div><div class="petal"></div>
-                                <div class="petal"></div><div class="petal"></div>
-                                <div class="petal"></div><div class="petal"></div>
-                                <div class="center"></div>
-                            </div>
-                        </div>
-                    <?php endfor; ?>
                 </div>
+                <!-- Margaritas procedimentales con alturas variadas (fuera de fx-ideal-grass para evitar el recorte de su máscara CSS) -->
+                <?php for($j=0; $j<6; $j++): 
+                    $h = rand(140, 220); // Altura del tallo
+                ?>
+                    <div class="fx-ideal-flower daisy" style="left: <?= 15 + ($j * 15) ?>%; --h: <?= $h ?>px;">
+                        <div class="stem-container">
+                            <div class="stem-path"></div>
+                        </div>
+                        <div class="flower-head">
+                            <div class="petal"></div><div class="petal"></div>
+                            <div class="petal"></div><div class="petal"></div>
+                            <div class="petal"></div><div class="petal"></div>
+                            <div class="petal"></div><div class="petal"></div>
+                            <div class="center"></div>
+                        </div>
+                    </div>
+                <?php endfor; ?>
                 <div class="fx-ideal-glow"></div>
             <?php elseif ($clima === 'nieve'): ?>
                 <!-- Helada: luna, nubes invernales (óvalos), niebla, nieve y escarcha -->
