@@ -93,12 +93,16 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 def authenticate_user(db: Session, username: str, password: str):
     """
-    Valida las credenciales (CIF como username) y devuelve el usuario si es correcto.
+    Valida las credenciales (CIF como username) y devuelve el usuario si es correcto y está activo.
     """
     # Buscamos al cliente por su CIF
     user = db.query(Cliente).filter(Cliente.cif == username).first()
     
     if not user:
+        return False
+        
+    # [V15.0] Bloqueo de seguridad: Evitar acceso a cuentas desactivadas (Soft Deleted)
+    if not user.activa:
         return False
     
     # Verificación del hash de la contraseña
@@ -132,6 +136,13 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         headers={"WWW-Authenticate": "Bearer"},
     )
     
+    # [V15.0] Excepción explícita para cuentas desactivadas
+    inactive_user_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Usuario inactivo o suspendido",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         cif_usuario: str = payload.get("sub")
@@ -141,10 +152,14 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-
+ 
     user = db.query(Cliente).filter(Cliente.cif == cif_usuario).first()
     if user is None:
         raise credentials_exception
+        
+    # [V15.0] Bloqueo de seguridad: Rechazar peticiones de cuentas desactivadas
+    if not user.activa:
+        raise inactive_user_exception
     
     # CONTROL DE CONCURRENCIA (Iron Fortress)
     # Comparamos el SID del token con el guardado en la base de datos.
