@@ -22,6 +22,18 @@ Se han creado una serie de escenarios fijos que se pueden activar durante la pre
 - **Realismo**: Para que los datos no parezcan artificiales (líneas rectas), el script añade pequeñas variaciones aleatorias a los valores.
 - **Respuesta Automática**: El backend de SIRA analiza estos datos entrantes y decide al momento si debe activar o desactivar los actuadores (luces, riego, ventanas, etc.).
 
+### Cómo ejecutar el simulador
+
+El script no contiene credenciales ni rutas fijas: toma la conexión de `DATABASE_URL` si existe (entorno Docker) o del `.env` del proyecto. Como la base de datos **no publica su puerto al exterior** (solo vive en la red interna `sira-network`), lo más sencillo es ejecutarlo dentro de esa red:
+
+```bash
+# Desde la raíz del repositorio (funciona en cualquier ruta donde se haya clonado)
+docker compose run --rm -v "$PWD/scripts:/scripts:ro" api \
+    python /scripts/simulador.py --clima ideal --intervalo 10
+```
+
+Escenarios disponibles: `ideal`, `tormenta`, `calor_extremo` y `random`. El parámetro `--intervalo` indica los segundos entre mediciones.
+
 ---
 
 ## 3. Gráficas y Visualización

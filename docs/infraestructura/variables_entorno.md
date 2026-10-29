@@ -20,9 +20,11 @@ Estas variables las usan tanto el contenedor de la base de datos para crearse co
 
 | Variable | Descripción | Ejemplo |
 | :--- | :--- | :--- |
-| `DB_USER` | Nombre del usuario de la base de datos. | `juanrisueno` |
-| `DB_PASSWORD` | Contraseña para conectar a la base de datos. | `juan1234` |
+| `DB_USER` | Nombre del usuario de la base de datos. | `sira_user` |
+| `DB_PASSWORD` | Contraseña para conectar a la base de datos. | `cambia_esta_clave` |
 | `DB_NAME` | Nombre de la base de datos del proyecto. | `sira_db` |
+
+> ⚠️ **Estos valores son de ejemplo.** El archivo `.env` real contiene credenciales de verdad y está excluido de Git; no copies su contenido en la documentación ni en capturas de pantalla.
 
 ---
 

@@ -63,8 +63,8 @@ La contraseña **no se pasa como argumento**: el script la pide por teclado dos 
 
 ## 3. Qué hace el script paso a paso
 
-1. **Deduce la ruta del proyecto** a partir de su propia ubicación (`scripts/` → carpeta padre), así que funciona aunque el repositorio se mueva o se renombre. Se puede forzar con la variable `SIRA_DIR`.
-2. **Lee `DB_USER` y `DB_NAME`** desde el `.env` del proyecto. No hay credenciales escritas a fuego en el script.
+1. **Deduce la ruta del proyecto** a partir de su propia ubicación (`scripts/` → carpeta padre), así que funciona aunque el repositorio se mueva o se renombre: no asume ninguna ruta absoluta ni nombre de usuario. Se puede forzar con la variable `SIRA_DIR`.
+2. **Lee `DB_USER` y `DB_NAME`** desde el `.env` del proyecto. No hay credenciales escritas a fuego en el script. Si el `.env` no existe (clon recién descargado), el script avisa; basta con copiar `env.ejemplo` a `.env` y rellenarlo.
 3. **Comprueba que `sira_api` y `sira_db` estén arrancados**; si no, aborta indicando el comando para levantarlos.
 4. **Pide la contraseña** por teclado con `read -s` (no aparece en pantalla, ni en el historial de bash, ni en la lista de procesos).
 5. **Genera el hash bcrypt (12 rondas)** ejecutando Python dentro del contenedor `sira_api`, que es la imagen que ya lleva el módulo `bcrypt` instalado. La contraseña viaja por `stdin`, nunca como argumento de comando.

@@ -11,8 +11,21 @@
 
 # 1. CONFIGURACIÓN
 # ----------------
-ORIGEN="$HOME/Proyecto_SIRA"
+# La ruta del proyecto se deduce subiendo un nivel desde la carpeta del script
+# (scripts/ -> raíz del repo). Así el backup funciona aunque el repositorio se
+# mueva o se renombre. Se puede forzar exportando SIRA_DIR antes de ejecutarlo.
+ORIGEN="${SIRA_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 RAIZ_BACKUPS="$HOME/sira_backups"
+
+# El nombre de la carpeta se usa al comprimir con tar (-C padre nombre)
+NOMBRE_DIR="$(basename "$ORIGEN")"
+DIR_PADRE="$(dirname "$ORIGEN")"
+
+if [ ! -d "$ORIGEN" ]; then
+    echo "ERROR: no existe la ruta del proyecto: $ORIGEN"
+    echo "       Exporta SIRA_DIR con la ruta correcta y vuelve a intentarlo."
+    exit 1
+fi
 
 # Identificadores de tiempo actuales
 YEAR_ID=$(date +"%Y")       # Ej: 2026
@@ -99,8 +112,10 @@ nice -n 19 tar -czf "$DESTINO_FINAL/codigo_fuente.tar.gz" \
     --exclude='venv' \
     --exclude='*.pyc' \
     --exclude='pg_data' \
+    --exclude='backups' \
+    --exclude='.env' \
     --exclude='.DS_Store' \
-    -C "$HOME" "Proyecto_SIRA"
+    -C "$DIR_PADRE" "$NOMBRE_DIR"
 
 if [ $? -ne 0 ]; then
     echo -e "${ROJO}❌ Error al comprimir.${NC}"

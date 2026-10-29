@@ -20,7 +20,7 @@ Para el proyecto se ha configurado **Nginx** como el único punto de acceso exte
 ### Contenedores y Docker (Resiliencia e Infraestructura Segura)
 - **Gestión de volúmenes persistentes**: Se han separado los datos de la base de datos y los logs de seguridad en volúmenes persistentes de Docker (`postgres_data`, `sira_security_history`), blindando el histórico de accesos y la base de datos frente a la destrucción física de los contenedores efímeros.
 - **Hardening del Contenedor Nginx (Montaje de Solo Lectura)**: El archivo de configuración de Nginx (`nginx.conf`) se monta en el contenedor en modo **Solo Lectura (`:ro` - Read-Only)**. Incluso en el escenario extremo de que el servidor web se viera comprometido, es físicamente imposible para un atacante alterar las directivas de red o inyectar redirecciones maliciosas en caliente.
-- **Sincronización Crítica de Arranque (Healthchecks)**: Para evitar fugas de sockets y caídas de servicio, la API de FastAPI no arranca hasta que la base de datos PostgreSQL supera con éxito el test de salud interna (`pg_isready -U postgres`), garantizando un inicio coordinado y robusto del ecosistema.
+- **Sincronización Crítica de Arranque (Healthchecks)**: Para evitar fugas de sockets y caídas de servicio, la API de FastAPI no arranca hasta que la base de datos PostgreSQL supera con éxito el test de salud interna (`pg_isready -U ${DB_USER} -d ${DB_NAME}`), garantizando un inicio coordinado y robusto del ecosistema.
 - **Resiliencia Automática (Alta Disponibilidad)**: Todos los servicios de la pila Docker implementan políticas de autorreparación `restart: unless-stopped`. Ante cualquier caída abrupta del servicio debido a errores de ejecución o desbordamiento de memoria, Docker levanta el contenedor de forma automática en segundos.
 - **Seguridad en el repositorio**: El archivo `.env` y las carpetas con datos sensibles están incluidos en el `.gitignore` para no subir secretos a GitHub.
 
@@ -45,6 +45,11 @@ Para el proyecto se ha configurado **Nginx** como el único punto de acceso exte
   - *Administradores y Root*: Requisito incrementado a un mínimo de 10 caracteres con la misma complejidad.
 - **Forzado de Cambio Inicial**: El campo flag `debe_cambiar_pw` del modelo de datos de base de datos obliga de forma estricta a cualquier usuario recién registrado a cambiar la contraseña predeterminada asignada por el administrador en su primer inicio de sesión.
 - **Bloqueo Inmediato de Cuentas Desactivadas (Soft Delete)**: Las cuentas inactivas (`activa = False`) tienen el login prohibido de forma absoluta. Adicionalmente, si un usuario que tiene una sesión activa es desactivado por un administrador, el middleware de autorización del backend (`get_current_user`) detectará el cambio de estado en la siguiente consulta HTTP, revocando su token en tiempo real devolviendo un código `HTTP 401` y expulsándole de la plataforma en milisegundos.
+
+### Restablecimiento de Credenciales por el Administrador
+Como consecuencia del forzado de cambio inicial (los usuarios semilla nacen con `debe_cambiar_pw = TRUE`), las contraseñas del seed (`20-data.sql`) dejan de ser válidas en cuanto el usuario las modifica, ya que el hash real queda almacenado en el volumen persistente `postgres_data`. Para recuperar el acceso a una cuenta sin destruir la base de datos se utiliza la herramienta **`scripts/reset_password_sira.sh`**, que regenera el hash Bcrypt de un CIF concreto (y opcionalmente fuerza un nuevo cambio).
+
+📄 *Procedimiento completo en [reset_password.md](reset_password.md).*
 
 ---
 
@@ -96,6 +101,16 @@ En la versión actual del proyecto (orientada a la demostración del TFG), la ca
 
 ## 6. Resiliencia y Recuperación
 Para asegurar la continuidad del sistema, se ha implementado un script de **backup inteligente** (`backup_sira.sh`) automatizado mediante **Crontab**. Este sistema gestiona la rotación de copias de seguridad de forma automática, garantizando que siempre existan puntos de restauración históricos.
+
+> **Importante — entorno de desarrollo vs. producción**: la programación con `crontab` descrita a continuación corresponde **únicamente al servidor de producción (AWS EC2)**. En un equipo de desarrollo o en una copia descargada del repositorio **no se instala ninguna tarea programada**: SIRA es un proyecto académico, no un servicio en explotación. En local, el backup se lanza a mano cuando se quiera:
+>
+> ```bash
+> ./scripts/backup_sira.sh
+> ```
+>
+> El script deduce la ruta del proyecto desde su propia ubicación, así que funciona sea cual sea la carpeta donde se haya clonado.
+
+El script deduce la ruta del proyecto a partir de su propia ubicación (carpeta `scripts/`) y excluye deliberadamente del archivo comprimido los directorios y ficheros que no deben copiarse: `.git`, `venv`, `__pycache__`, `pg_data`, la carpeta `backups/` (volcados SQL) y, de forma destacada, **el archivo `.env`**, que contiene las credenciales de PostgreSQL y la clave de firma JWT. De este modo, una copia de seguridad filtrada no expone los secretos del sistema: para restaurar en otra máquina basta con recrear el `.env` desde `env.ejemplo`.
 
 **Configuración de automatización:**
 ```bash

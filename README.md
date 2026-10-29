@@ -26,7 +26,7 @@
 
 - **Frontend:** PHP 8.2 (Lógica de presentación) + CSS 3 Moderno (Variables, Grid, Flexbox).
 - **Backend:** FastAPI (Python) - API REST de alto rendimiento.
-- **Persistencia:** PostgreSQL 15+ con persistencia en volumen Docker.
+- **Persistencia:** PostgreSQL 16 (imagen `postgres:16-alpine`) con volumen Docker persistente.
 - **Infraestructura:** Nginx (Proxy Inverso / Gateway), Docker, Docker Compose.
 - **Cloud:** Despliegue optimizado para AWS (EC2).
 
@@ -97,8 +97,12 @@ Para la gestión diaria de la infraestructura con Docker Compose:
 - **Levantar en segundo plano:** `docker compose up -d`
 - **Ver logs en tiempo real:** `docker compose logs -f`
 - **Reiniciar un servicio específico:** `docker compose restart api`
-- **Acceso a la base de datos:** `docker compose exec db psql -U sira_user -d sira_db`
+- **Acceso a la base de datos:** `docker compose exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'`
+  *(se leen las variables del contenedor, así el comando vale para cualquier `.env`)*
+- **Copia de seguridad manual:** `./scripts/backup_sira.sh`
+  *(en local se lanza a mano; la automatización con `crontab` es solo del servidor de producción)*
 - **Limpieza total:** `docker compose down -v`
+  *(⚠️ borra los datos y el historial de seguridad. Al volver a levantar, la base se recrea con el seed de `20-data.sql`, no vacía)*
 
 ---
 

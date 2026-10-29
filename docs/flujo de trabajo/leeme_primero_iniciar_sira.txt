@@ -72,11 +72,13 @@ La base de datos se inicializa automáticamente en orden alfabético: **10-schem
     Por lo que, es muy importante que este archivo tenga, al menos, el ejemplo de este LEEME.
 
 2.  **Comando para Pruebas (Conexión a BBDD):**
-    Primero, conéctate al contenedor de la BBDD desde la terminal de VS Code:
-    
-    docker exec -it sira_db psql -U <usuario> -d sira_db
+    Primero, conéctate al contenedor de la BBDD desde la terminal de VS Code.
+    Usa el comando genérico: lee el usuario y la base del propio contenedor,
+    así funciona con el `.env` de cada uno sin cambiar nada:
 
-    *(Ejemplo: docker exec -it sira_db psql -U juanrisueno -d sira_db)*
+    ```bash
+    docker exec -it sira_db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+    ```
 
 3.  **Ejecuta el script de prueba (DENTRO de psql):**
     Una vez que el prompt sea `sira_db=#`, ejecuta el script:

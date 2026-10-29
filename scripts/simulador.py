@@ -1,3 +1,31 @@
+#!/usr/bin/env python3
+# =============================================================================
+# simulador.py — Simulador IoT de SIRA
+# -----------------------------------------------------------------------------
+# QUÉ HACE
+#   Inserta mediciones sintéticas en la tabla MEDICION cada N segundos, para
+#   demostrar la lógica de automatización del backend sin hardware real.
+#   El backend (FastAPI) evalúa esas mediciones y decide sobre los actuadores.
+#
+# CÓMO SE USA
+#   Recomendado, dentro de la red Docker (el host correcto es 'db'):
+#     docker compose run --rm -v "$PWD/scripts:/scripts:ro" \
+#         api python /scripts/simulador.py --clima ideal --intervalo 10
+#
+#   En local, con acceso a PostgreSQL desde la máquina:
+#     python3 scripts/simulador.py --clima tormenta
+#
+#   Escenarios: ideal | tormenta | calor_extremo | random
+#
+# QUÉ NECESITA
+#   - Credenciales de la BD. Se resuelven en este orden:
+#       1) DATABASE_URL (la define Docker Compose para el contenedor 'api')
+#       2) variables de entorno DB_USER / DB_PASSWORD / DB_NAME / DB_HOST
+#       3) fichero .env de la raíz del proyecto
+#     No hay credenciales escritas en el código.
+#   - Que PostgreSQL sea accesible desde donde se ejecute el script.
+# =============================================================================
+
 import psycopg2
 import time
 import random
@@ -6,14 +34,61 @@ import os
 from datetime import datetime
 
 # --- Configuración de Base de Datos ---
-# Prioridad: Variables de entorno (Docker) > .env > Valores por defecto
-DB_USER = os.getenv("DB_USER", "juanrisueno")
-DB_PASS = os.getenv("DB_PASSWORD", "sira1234")
-DB_NAME = os.getenv("DB_NAME", "sira_db")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
+# Prioridad: DATABASE_URL (Docker) > variables de entorno > fichero .env > valores neutros.
+#
+# No se asume ninguna ruta fija: el .env se busca subiendo un nivel desde este
+# script (scripts/ -> raíz del repositorio), de modo que funciona igual si el
+# proyecto se ha clonado en ~/Proyectos, en /opt o en el escritorio.
+from pathlib import Path
+from urllib.parse import urlparse
+
+DIR_PROYECTO = Path(__file__).resolve().parent.parent
+
+
+def cargar_env(ruta: Path) -> dict:
+    """Lee un .env sencillo (CLAVE=valor) sin dependencias externas."""
+    datos = {}
+    if not ruta.exists():
+        return datos
+    for linea in ruta.read_text(encoding="utf-8").splitlines():
+        linea = linea.strip()
+        if not linea or linea.startswith("#") or "=" not in linea:
+            continue
+        clave, valor = linea.split("=", 1)
+        datos[clave.strip()] = valor.strip().strip('"').strip("'")
+    return datos
+
+
+_env = cargar_env(DIR_PROYECTO / ".env")
+
+
+def config(clave: str, por_defecto=None):
+    """Devuelve el valor de una clave desde entorno, .env o valor por defecto."""
+    return os.getenv(clave) or _env.get(clave) or por_defecto
+
+
+# Dentro de la red Docker la API recibe DATABASE_URL; si existe, se reutiliza
+# para no repetir credenciales (y el host correcto es 'db', no 'localhost').
+_url = os.getenv("DATABASE_URL")
+if _url:
+    _partes = urlparse(_url)
+    DB_USER = _partes.username
+    DB_PASS = _partes.password
+    DB_NAME = (_partes.path or "/sira_db").lstrip("/")
+    DB_HOST = _partes.hostname or "db"
+    DB_PORT = str(_partes.port or 5432)
+else:
+    DB_USER = config("DB_USER")
+    DB_PASS = config("DB_PASSWORD")
+    DB_NAME = config("DB_NAME", "sira_db")
+    DB_HOST = config("DB_HOST", "localhost")
+    DB_PORT = config("DB_PORT", "5432")
 
 def get_connection():
+    if not DB_USER or not DB_PASS:
+        print("❌ Faltan credenciales: define DB_USER y DB_PASSWORD en el .env del proyecto")
+        print(f"   (o copia env.ejemplo a .env dentro de {DIR_PROYECTO})")
+        return None
     try:
         conn = psycopg2.connect(
             user=DB_USER,
@@ -25,6 +100,7 @@ def get_connection():
         return conn
     except Exception as e:
         print(f"❌ Error conectando a la base de datos: {e}")
+        print(f"   Destino: {DB_USER}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
         return None
 
 def simular_clima(clima):
