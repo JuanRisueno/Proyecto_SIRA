@@ -155,6 +155,7 @@ erDiagram
 - [🛡️ Manifiesto de Seguridad "Iron Fortress"](docs/infraestructura/manifiesto_seguridad.md)
 - [🏗️ Arquitectura de Sistemas](docs/infraestructura/arquitectura_sira.md)
 - [🧪 Simulador y Lógica IoT](docs/planificacion/simulacion_iot.md)
+- [🔑 Restablecer Contraseñas (root bloqueado)](docs/infraestructura/reset_password.md)
 
 ---
 

@@ -231,3 +231,7 @@ sira.db
 
 # Guiones para la defensa del TFG (Privado)
 docs/defensa_tfg/
+
+# Copias de seguridad locales de la base de datos (NUNCA a Git: contienen datos reales)
+backups/
+
