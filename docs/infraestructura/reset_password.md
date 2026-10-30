@@ -64,16 +64,20 @@ La contraseña **no se pasa como argumento**: el script la pide por teclado dos 
 ## 3. Qué hace el script paso a paso
 
 1. **Deduce la ruta del proyecto** a partir de su propia ubicación (`scripts/` → carpeta padre), así que funciona aunque el repositorio se mueva o se renombre: no asume ninguna ruta absoluta ni nombre de usuario. Se puede forzar con la variable `SIRA_DIR`.
-2. **Lee `DB_USER` y `DB_NAME`** desde el `.env` del proyecto. No hay credenciales escritas a fuego en el script. Si el `.env` no existe (clon recién descargado), el script avisa; basta con copiar `env.ejemplo` a `.env` y rellenarlo.
-3. **Comprueba que `sira_api` y `sira_db` estén arrancados**; si no, aborta indicando el comando para levantarlos.
-4. **Pide la contraseña** por teclado con `read -s` (no aparece en pantalla, ni en el historial de bash, ni en la lista de procesos).
-5. **Genera el hash bcrypt (12 rondas)** ejecutando Python dentro del contenedor `sira_api`, que es la imagen que ya lleva el módulo `bcrypt` instalado. La contraseña viaja por `stdin`, nunca como argumento de comando.
-6. **Actualiza la fila del usuario** en la tabla `cliente`:
+2. **Valida el CIF recibido** antes de usarlo: solo admite entre 1 y 9 caracteres alfanuméricos. Como el CIF se incrusta en una sentencia SQL, esta comprobación impide cualquier intento de inyección a través de ese parámetro.
+3. **Lee `DB_USER` y `DB_NAME`** desde el `.env` del proyecto. No hay credenciales escritas a fuego. Importante: **no ejecuta el `.env` con `source`**, solo extrae esas dos claves, de modo que una contraseña con `$`, `!`, `#` o comillas no puede romper el script. Si el `.env` no existe (clon recién descargado), avisa; basta con copiar `env.ejemplo` a `.env`.
+4. **Comprueba que `sira_api` y `sira_db` estén arrancados**; si no, aborta indicando el comando para levantarlos y el estado real del contenedor.
+5. **Comprueba que el usuario existe** consultando la tabla `cliente` antes de pedir nada. Si el CIF no está, muestra la lista de usuarios disponibles y termina sin tocar la base.
+6. **Pide la contraseña** por teclado con `read -s` (no aparece en pantalla, ni en el historial de bash, ni en la lista de procesos), la confirma y valida longitud mínima (8 caracteres) y el límite de 72 bytes de bcrypt.
+7. **Genera el hash bcrypt (12 rondas)** ejecutando Python dentro del contenedor `sira_api`, que es la imagen que ya lleva el módulo `bcrypt` instalado. La contraseña viaja por `stdin`, nunca como argumento de comando.
+8. **Actualiza la fila del usuario** en la tabla `cliente`:
    - `hash_contrasena` → nuevo hash bcrypt.
    - `debe_cambiar_pw` → `TRUE` o `FALSE` según el flag.
    - `activa = TRUE` → reactiva la cuenta si estaba desactivada (borrado lógico).
    - `session_id = NULL` y `ultima_actividad = NULL` → cierra cualquier sesión abierta, evitando el aviso de "sesión iniciada desde otro dispositivo".
-7. **Avisa si el CIF no existe**: si el `UPDATE` afecta a 0 filas, no se ha cambiado nada.
+9. **Verifica el resultado**: vuelve a leer la fila y confirma que el hash guardado es exactamente el generado y que el usuario quedó activo. Solo entonces imprime `OK`.
+
+Todos los pasos críticos comprueban el código de salida y muestran un mensaje propio si algo falla. Esto es necesario porque el script usa `set -euo pipefail`: sin ese tratamiento, cualquier error de `docker` o `psql` lo abortaría **en silencio**, sin pistas sobre la causa.
 
 ---
 
@@ -90,6 +94,15 @@ La columna `cliente.hash_contrasena` guarda hashes bcrypt (`$2b$12$...`, 60 cara
 ### Interacción con el historial de contraseñas
 
 El backend guarda un historial de hashes en el volumen `sira_security_history` (`backend/app/security_history.py`) para impedir la reutilización de contraseñas. Ese control se aplica **cuando el usuario cambia la clave desde la web**. Si el script deja `debe_cambiar_pw = TRUE` y la nueva contraseña coincide con una usada antes, el formulario de cambio la rechazará y pedirá otra distinta. Es el comportamiento esperado.
+
+### Diagnóstico cuando el script «no hace nada»
+
+| Síntoma | Causa probable | Solución |
+| :--- | :--- | :--- |
+| Terminaba sin imprimir nada y sin `OK` | Con `set -e`, un `docker exec` fallido abortaba el script. Ocurría, por ejemplo, si `sira_api` estaba caído o reiniciándose. | La versión actual comprueba cada paso y muestra el motivo. Además, revisar `docker compose ps` y `docker logs --tail 50 sira_api`. |
+| `read: -p: no coprocess` o error de sintaxis en `read` | Se ejecutó con `sh` (dash) en lugar de `bash`. | Lanzarlo como `./scripts/reset_password_sira.sh …` o `bash scripts/reset_password_sira.sh …`. |
+| `ERROR: no se pudo leer la contraseña` | Sin terminal interactivo (por ejemplo, desde cron o con la entrada redirigida). | Ejecutarlo en una sesión normal de terminal. |
+| `ERROR: el contenedor sira_api no está en marcha` | La API no arranca (ver [incidencia de `psycopg`](../incidencias%20resueltas/INCIDENCIA_LOGIN_SQLALCHEMY_PSYCOPG.md)). | `docker compose up -d` y revisar los logs de la API. |
 
 ### Alternativa destructiva (no recomendada)
 

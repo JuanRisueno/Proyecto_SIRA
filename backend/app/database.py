@@ -23,17 +23,40 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# --- 1. URL DE CONEXIÓN (Seguridad - Leído del .env) ---
-# Leemos la variable de entorno 'DATABASE_URL' que Docker Compose nos inyecta.
-# Esto evita escribir contraseñas en el código (Práctica 12-Factor App).
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+# --- 1. URL DE CONEXIÓN (Seguridad - Leído del entorno) ---
+# Hay dos formas de indicar la conexión, por orden de prioridad:
+#   1) Variables sueltas: DB_USER, DB_PASSWORD, DB_NAME (+ DB_HOST y DB_PORT opcionales).
+#   2) DATABASE_URL completa (formato antiguo, se mantiene por compatibilidad).
+#
+# ¿Por qué se prefieren las variables sueltas? Porque una contraseña con
+# caracteres especiales (@, :, /, #, %) rompe la sintaxis de una URL: el parser
+# interpreta el '@' como separador de host y la conexión falla con un error
+# confuso. Al montar la URL aquí con quote_plus(), esos caracteres se codifican
+# y la contraseña funciona igual en Linux, Windows o AWS.
+from urllib.parse import quote_plus
+
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+DB_HOST = os.getenv("DB_HOST", "db")   # 'db' es el nombre del servicio en docker-compose.yml
+DB_PORT = os.getenv("DB_PORT", "5432")
+
+if DB_USER and DB_PASSWORD and DB_NAME:
+    SQLALCHEMY_DATABASE_URL = (
+        f"postgresql+psycopg2://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}"
+        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
+else:
+    # Modo heredado: si alguien define DATABASE_URL a mano (por ejemplo, apuntando
+    # a un PostgreSQL externo), se usa tal cual.
+    SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
 # [MEJORA v1.5] Validación de Seguridad
-# Si la variable no existe, detenemos el programa con un mensaje claro
-# en lugar de dejar que explote más adelante con un error extraño.
+# Si no hay ni variables sueltas ni DATABASE_URL, detenemos el programa con un
+# mensaje claro en lugar de dejar que explote más adelante con un error extraño.
 if not SQLALCHEMY_DATABASE_URL:
-    print("❌ ERROR CRÍTICO: No se encontró la variable de entorno 'DATABASE_URL'.")
-    print("   Asegúrate de lanzar esto con Docker Compose o definirla en tu .env")
+    print("❌ ERROR CRÍTICO: no hay configuración de base de datos.")
+    print("   Define DB_USER, DB_PASSWORD y DB_NAME (o DATABASE_URL) en el .env")
     sys.exit(1)
 
 

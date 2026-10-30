@@ -4,7 +4,12 @@ uvicorn                     # Servidor ASGI necesario para ejecutar aplicaciones
 
 # --- Base de Datos ---
 sqlmodel                    # ORM moderno que combina SQLAlchemy y Pydantic (NECESARIO PARA TU TFG).
-sqlalchemy                  # ORM (Mapeo Objeto-Relacional) para interactuar con SQL desde Python.
+# IMPORTANTE: versión acotada a la rama 2.0 a propósito.
+# A partir de SQLAlchemy 2.1, una URL "postgresql://" usa por defecto el driver psycopg (v3)
+# en lugar de psycopg2. Como la imagen solo instala psycopg2-binary, actualizar sin control
+# rompe el arranque de la API (ModuleNotFoundError: No module named 'psycopg').
+# Ver docs/INCIDENCIA_LOGIN_SQLALCHEMY_PSYCOPG.md
+sqlalchemy>=2.0,<2.1        # ORM (Mapeo Objeto-Relacional) para interactuar con SQL desde Python.
 psycopg2-binary             # Adaptador/Driver para conectar Python con PostgreSQL.
 
 # --- Validación de Datos ---

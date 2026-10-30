@@ -1,6 +1,3 @@
-# Este archivo define y ejecuta todos los servicios del proyecto SIRA.
-version: '3.8'
-
 services:
 
   # 1. Base de Datos: PostgreSQL (sira_db)
@@ -47,7 +44,18 @@ services:
     networks:
       - sira-network
     environment:
-      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      # El driver se indica de forma explícita (+psycopg2) para que la conexión NO dependa
+      # de la versión de SQLAlchemy instalada: a partir de la 2.1, una URL "postgresql://"
+      # intenta usar psycopg v3, que no está en la imagen, y la API no arranca.
+      - DATABASE_URL=postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      # Se pasan también las piezas por separado: database.py monta la URL con ellas y
+      # codifica los caracteres especiales de la contraseña (que romperían la URL de arriba).
+      # DATABASE_URL se mantiene por compatibilidad con scripts antiguos.
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=db
+      - DB_PORT=5432
       - PYTHONUNBUFFERED=1
       
   # 3. Proxy Inverso (Nginx)

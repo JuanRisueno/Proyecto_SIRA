@@ -21,11 +21,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'])) {
         'Content-Type: application/x-www-form-urlencoded',
         'Accept: application/json'
     ]);
-    $response  = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $response   = curl_exec($ch);
+    $http_code  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    // El código de error de cURL se lee ANTES de cerrar el handle: después ya no existe.
+    // 0 = sin error de red. Distinto de 0 = no se pudo ni hablar con la API (DNS, conexión rechazada...).
+    $curl_errno = curl_errno($ch);
     curl_close($ch);
 
-    if ($http_code == 200) {
+    if ($curl_errno !== 0) {
+        // La API no responde: es un fallo de infraestructura, no de credenciales.
+        $error_msg = "No se puede contactar con el servicio. Inténtalo en unos minutos.";
+    } elseif ($http_code == 200) {
         $resultado = json_decode($response, true);
         $_SESSION['jwt_token'] = $resultado['access_token'];
         $_SESSION['debe_cambiar_pw'] = $resultado['debe_cambiar_pw'] ?? false;
@@ -51,8 +57,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'])) {
             header("Location: dashboard.php");
         }
         exit();
-    } else {
+    } elseif ($http_code == 401) {
+        // Solo el 401 significa de verdad que el CIF o la contraseña son incorrectos.
         $error_msg = "CIF o contraseña incorrectos. Inténtalo de nuevo.";
+    } else {
+        // 500, 502, 503...: la API está caída, arrancando o fallando.
+        // Nunca se debe mostrar "contraseña incorrecta" en este caso.
+        $error_msg = "El servicio no está disponible en este momento (código $http_code). Inténtalo más tarde.";
     }
 }
 

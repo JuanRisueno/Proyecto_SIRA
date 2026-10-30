@@ -1,0 +1,38 @@
+# Normalización de finales de línea por tipo de archivo.
+#
+# ¿Por qué existe este archivo?
+#   Git en Windows (con core.autocrlf=true) convierte los finales de línea de LF a
+#   CRLF al hacer checkout. Un script .sh con CRLF NO se puede ejecutar en Linux:
+#   bash lee "\r" como parte del intérprete y falla con:
+#       /usr/bin/env: 'bash\r': No such file or directory
+#   Forzando eol=lf, el mismo repositorio clonado en Windows sigue funcionando
+#   cuando se despliega en Linux o AWS.
+#
+#   Los .sql también se fuerzan a LF para que los scripts de inicialización de
+#   PostgreSQL no arrastren \r en los valores insertados.
+
+* text=auto
+
+*.sh        text eol=lf
+*.sql       text eol=lf
+*.py        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.conf      text eol=lf
+*.md        text eol=lf
+*.json      text eol=lf
+*.css       text eol=lf
+*.js        text eol=lf
+*.php       text eol=lf
+*.svg       text eol=lf
+Dockerfile  text eol=lf
+.env        text eol=lf
+env.ejemplo text eol=lf
+
+# Los binarios no se tocan nunca.
+*.pdf       binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.ico       binary
+*.gif       binary

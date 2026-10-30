@@ -16,6 +16,7 @@ import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 # --- IMPORTACIONES LOCALES ---
@@ -95,8 +96,24 @@ def authenticate_user(db: Session, username: str, password: str):
     """
     Valida las credenciales (CIF como username) y devuelve el usuario si es correcto y está activo.
     """
-    # Buscamos al cliente por su CIF
+    # Normalizamos lo que llega: un espacio o un salto de línea al pegar el CIF
+    # no debe impedir el acceso.
+    username = username.strip()
+
+    # 1) Búsqueda exacta: es la que manda. Si el CIF existe tal cual, se usa ese usuario.
     user = db.query(Cliente).filter(Cliente.cif == username).first()
+
+    # 2) Si no aparece, segundo intento sin distinguir mayúsculas/minúsculas.
+    #    Motivo: el seed mezcla CIF en minúsculas ('root', 'admin') con CIF de
+    #    empresa en mayúsculas ('B04XXXXXX'). Un teclado de móvil que auto-capitaliza
+    #    la primera letra ('Root') hacía fallar el login sin motivo aparente.
+    #    No debilita la seguridad: la contraseña se sigue verificando con bcrypt.
+    if not user:
+        user = (
+            db.query(Cliente)
+            .filter(func.lower(Cliente.cif) == username.lower())
+            .first()
+        )
     
     if not user:
         return False

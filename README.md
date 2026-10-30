@@ -101,6 +101,8 @@ Para la gestión diaria de la infraestructura con Docker Compose:
   *(se leen las variables del contenedor, así el comando vale para cualquier `.env`)*
 - **Copia de seguridad manual:** `./scripts/backup_sira.sh`
   *(en local se lanza a mano; la automatización con `crontab` es solo del servidor de producción)*
+- **Verificar que los usuarios de la base de datos entran correctamente:** `./scripts/verificar_usuarios_sira.sh`
+  *(comprueba contenedores, usuarios, hashes bcrypt y login real; `--sin-login` evita cerrar sesiones abiertas)*
 - **Limpieza total:** `docker compose down -v`
   *(⚠️ borra los datos y el historial de seguridad. Al volver a levantar, la base se recrea con el seed de `20-data.sql`, no vacía)*
 
@@ -160,6 +162,8 @@ erDiagram
 - [🏗️ Arquitectura de Sistemas](docs/infraestructura/arquitectura_sira.md)
 - [🧪 Simulador y Lógica IoT](docs/planificacion/simulacion_iot.md)
 - [🔑 Restablecer Contraseñas (root bloqueado)](docs/infraestructura/reset_password.md)
+- [✅ Garantía de Login Multiplataforma (Linux / Windows / AWS)](docs/infraestructura/garantia_login_usuarios.md)
+- [🐘 Incidencia de login por SQLAlchemy y psycopg](docs/incidencias%20resueltas/INCIDENCIA_LOGIN_SQLALCHEMY_PSYCOPG.md)
 
 ---
 
