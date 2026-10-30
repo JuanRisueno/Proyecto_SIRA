@@ -235,3 +235,6 @@ docs/defensa_tfg/
 # Copias de seguridad locales de la base de datos (NUNCA a Git: contienen datos reales)
 backups/
 
+# Notas locales de trabajo (libreta de la incidencia del login: NO a Git)
+ESTADO_INCIDENCIA_LOGIN.md
+

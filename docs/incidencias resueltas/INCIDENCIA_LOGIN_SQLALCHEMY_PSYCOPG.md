@@ -6,6 +6,12 @@
 **Severidad:** Alta (el sistema queda inoperativo: nadie puede iniciar sesión)
 **Estado:** Resuelta — cambios aplicados en el repositorio (apartado 6); pendiente de reconstruir la imagen para desplegarlos
 
+> **Nota (30/10/2026, misma jornada):** esta incidencia (driver `psycopg`) quedó cerrada, pero el
+> mismo síntoma reapareció por una causa distinta: la contraseña del volumen de PostgreSQL ya no
+> coincidía con la del `.env`. Ver
+> [`INCIDENCIA_LOGIN_PASSWORD_POSTGRES_VOLUMEN.md`](./INCIDENCIA_LOGIN_PASSWORD_POSTGRES_VOLUMEN.md).
+> Si el login vuelve a fallar, el orden de comprobación es: `./scripts/diagnostico_sira.sh` primero.
+
 ---
 
 ## Resumen

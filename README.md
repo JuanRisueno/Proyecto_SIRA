@@ -65,8 +65,14 @@ SIRA no solo gestiona riego, protege datos críticos de la explotación:
 ```bash
 git clone https://github.com/JuanRisueno/Proyecto_SIRA.git
 cd Proyecto_SIRA
-cp .env.example .env
+cp env.ejemplo .env      # opcional: sin .env también arranca, con valores por defecto
 ```
+> El `.env` solo aporta el usuario/contraseña/nombre de base de PostgreSQL y el puerto externo.
+> **No hace falta recordar nada de eso**: si cambia cualquiera de los tres, el healthcheck de
+> `sira_db` crea o ajusta lo que falte en el siguiente arranque (rol, contraseña, base de datos y
+> permisos). Se puede poner `DB_USER=PepitoSL` y funciona.
+
+
 
 ### 2. Lanzar Infraestructura
 ```bash
@@ -77,6 +83,31 @@ docker compose up -d --build
 - **Plataforma:** [http://localhost:8085](http://localhost:8085)
 - **API Docs (Swagger):** [http://localhost:8085/api/docs](http://localhost:8085/api/docs)
 - **ReDoc (Documentación limpia):** [http://localhost:8085/api/redoc](http://localhost:8085/api/redoc)
+
+### 4. Verificar que todo está sano
+```bash
+./scripts/diagnostico_sira.sh
+```
+Recorre la cadena completa (contenedores → BBDD → API → login) y señala el eslabón roto.
+
+---
+
+## 📍 Portabilidad: la carpeta y el sistema operativo dan igual
+
+SIRA se puede instalar en `~/Repositorios/Proyecto_SIRA`, en `~/personal/sira` o en
+`C:\sira` sin tocar nada, y **siempre usará la misma base de datos**:
+
+| Pieza | Por qué no depende de la ruta |
+|---|---|
+| Proyecto Compose | `name: sira` fija el nombre del proyecto (sin esto se deducía de la carpeta). |
+| Volúmenes | `name: sira_postgres_data` y `name: sira_security_history` son nombres fijos. |
+| Contenedores | `container_name` fijo (`sira_db`, `sira_api`, `sira_nginx`, `sira_frontend`). |
+| Red | `name: sira_network`. |
+| Rutas | Todos los montajes son relativos (`./backend`, `./frontend`, `./nginx`). |
+| Fin de línea | `.gitattributes` fuerza LF en `.sh`, `.yml` y `.env`, así que el clonado en Windows no rompe los scripts. |
+
+> ⚠️ No conviene arrancar dos copias del proyecto a la vez: comparten nombres de contenedor
+> y de volumen (volumen compartido = misma base de datos).
 
 ---
 

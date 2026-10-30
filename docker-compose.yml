@@ -1,3 +1,22 @@
+# =============================================================================
+#  SIRA — Orquestación de contenedores (Docker Compose)
+# =============================================================================
+#
+#  `name:` fija el nombre del proyecto. Sin esto, Docker lo deduce del nombre de
+#  la carpeta (Proyecto_SIRA -> "proyecto_sira"), así que mover el proyecto de
+#  carpeta cambiaba los nombres de volúmenes, red y contenedores, y SIRA
+#  "perdía" la base de datos al reinstalarlo en otra ruta.
+#
+#    Antes:  /Repositorios/Proyecto_SIRA -> proyecto_sira_postgres_data
+#            /personal/sira              -> sira_postgres_data        <-- otra BBDD
+#            C:\sira (Windows)           -> sira_postgres_data
+#
+#  Con `name: sira` (y los volúmenes con nombre explícito, ver el final del
+#  fichero) la instalación es la misma en cualquier ruta y en cualquier sistema.
+# =============================================================================
+
+name: sira
+
 services:
 
   # 1. Base de Datos: PostgreSQL (sira_db)
@@ -11,21 +30,37 @@ services:
       - postgres_data:/var/lib/postgresql/data/
       
       # Volumen 2: Inicialización Automática de la BBDD (Bind Mount).
+      # OJO: aquí solo van scripts de inicialización. Un .sh en esta carpeta lo
+      # EJECUTA PostgreSQL al crear la BBDD desde cero, por eso el healthcheck
+      # vive en backend/scripts/ y no aquí.
       - ./backend/database:/docker-entrypoint-initdb.d 
+
+      # Healthcheck propio: comprueba la contraseña y, si no coincide con la del
+      # .env, la alinea (ver backend/scripts/sira-healthcheck.sh).
+      - ./backend/scripts/sira-healthcheck.sh:/usr/local/bin/sira-healthcheck.sh:ro
       
     networks:
       - sira-network               # Conexión a la red interna.
     environment:
-      # Variables leídas del archivo .env
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      # Variables leídas del archivo .env.
+      # Los valores por defecto (:-) evitan que el stack quede inservible si el
+      # .env falta o está incompleto: si no hay valor, se usa uno conocido e
+      # idéntico en la BBDD y en la API, así que el login sigue funcionando.
+      - POSTGRES_USER=${DB_USER:-sira_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-sira_cambiar_en_env}
+      - POSTGRES_DB=${DB_NAME:-sira_db}
     
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      # Se llama con `sh` explícito para que funcione aunque el montaje del
+      # script venga sin permiso de ejecución (pasa en Windows y en algunos
+      # sistemas de ficheros en red).
+      # Este healthcheck escribe (solo si hace falta) para sincronizar la
+      # contraseña; está explicado en el propio script.
+      test: ["CMD-SHELL", "sh /usr/local/bin/sira-healthcheck.sh"]
+      interval: 10s
+      timeout: 10s
+      retries: 6
+      start_period: 15s
 
   # 2. API de la Aplicación (Python/FastAPI)
   # -------------------------------------
@@ -37,7 +72,8 @@ services:
     #    - "8000:8000"              # Todo pasa ahora por el puerto 8085 (Nginx)
     depends_on:
       db:
-        condition: service_healthy # Solo arranca cuando la BBDD está lista.
+        condition: service_healthy # Solo arranca cuando la BBDD está lista Y la
+                                   # contraseña del .env ya funciona de verdad.
     volumes:
       - ./backend:/app
       - sira_security_history:/app/data/security/history
@@ -47,16 +83,29 @@ services:
       # El driver se indica de forma explícita (+psycopg2) para que la conexión NO dependa
       # de la versión de SQLAlchemy instalada: a partir de la 2.1, una URL "postgresql://"
       # intenta usar psycopg v3, que no está en la imagen, y la API no arranca.
-      - DATABASE_URL=postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - DATABASE_URL=postgresql+psycopg2://${DB_USER:-sira_user}:${DB_PASSWORD:-sira_cambiar_en_env}@db:5432/${DB_NAME:-sira_db}
       # Se pasan también las piezas por separado: database.py monta la URL con ellas y
       # codifica los caracteres especiales de la contraseña (que romperían la URL de arriba).
       # DATABASE_URL se mantiene por compatibilidad con scripts antiguos.
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+      # Los valores por defecto son los MISMOS que los de la BBDD: si el .env está
+      # vacío o no existe, ambos lados coinciden y el login sigue funcionando.
+      - DB_USER=${DB_USER:-sira_user}
+      - DB_PASSWORD=${DB_PASSWORD:-sira_cambiar_en_env}
+      - DB_NAME=${DB_NAME:-sira_db}
       - DB_HOST=db
       - DB_PORT=5432
       - PYTHONUNBUFFERED=1
+
+    healthcheck:
+      # Sirve para que `docker ps` diga la verdad: si la API se cae al arrancar
+      # (por ejemplo, sin conexión a la BBDD) el contenedor sale como "unhealthy"
+      # en lugar de aparentar que todo va bien. No hay curl en la imagen, así que
+      # se usa el propio Python.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
       
   # 3. Proxy Inverso (Nginx)
   # ----------------------------------
@@ -88,9 +137,15 @@ services:
 # --- Definiciones de Red y Volúmenes ---
 
 volumes:
+  # `name:` deja el volumen con un nombre fijo, independiente de la carpeta y
+  # del sistema operativo donde se instale SIRA. Sin `name:`, Docker antepone el
+  # nombre del proyecto (que sale del directorio) y cambia al mover el proyecto.
   postgres_data:
+    name: sira_postgres_data
   sira_security_history:
+    name: sira_security_history
 
 networks:
   sira-network:
+    name: sira_network
     driver: bridge

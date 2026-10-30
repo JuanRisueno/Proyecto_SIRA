@@ -31,9 +31,16 @@ from sqlalchemy.orm import sessionmaker
 # ¿Por qué se prefieren las variables sueltas? Porque una contraseña con
 # caracteres especiales (@, :, /, #, %) rompe la sintaxis de una URL: el parser
 # interpreta el '@' como separador de host y la conexión falla con un error
-# confuso. Al montar la URL aquí con quote_plus(), esos caracteres se codifican
-# y la contraseña funciona igual en Linux, Windows o AWS.
-from urllib.parse import quote_plus
+# confuso. Por eso la URL no se escribe a mano: se construye con URL.create(),
+# que se encarga del escapado de cada trozo por separado.
+#
+# OJO con el detalle que costó una incidencia: NO usar urllib.parse.quote_plus()
+# para esto. quote_plus convierte el espacio en '+', y SQLAlchemy al parsear la
+# URL usa unquote() (no unquote_plus()), así que el '+' se queda como carácter
+# literal: la API enviaría "Clave+Rara" cuando la contraseña real es
+# "Clave Rara" y PostgreSQL respondería "password authentication failed".
+# URL.create() no tiene ese problema porque no pasa por texto.
+from sqlalchemy.engine import URL
 
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
@@ -42,9 +49,15 @@ DB_HOST = os.getenv("DB_HOST", "db")   # 'db' es el nombre del servicio en docke
 DB_PORT = os.getenv("DB_PORT", "5432")
 
 if DB_USER and DB_PASSWORD and DB_NAME:
-    SQLALCHEMY_DATABASE_URL = (
-        f"postgresql+psycopg2://{quote_plus(DB_USER)}:{quote_plus(DB_PASSWORD)}"
-        f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    # Objeto URL, no cadena: SQLAlchemy escapa cada componente por su cuenta y
+    # admite cualquier carácter en la contraseña (espacios, @, $, #, comillas...).
+    SQLALCHEMY_DATABASE_URL = URL.create(
+        drivername="postgresql+psycopg2",
+        username=DB_USER,
+        password=DB_PASSWORD,
+        host=DB_HOST,
+        port=int(DB_PORT),
+        database=DB_NAME,
     )
 else:
     # Modo heredado: si alguien define DATABASE_URL a mano (por ejemplo, apuntando
